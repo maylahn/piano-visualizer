@@ -1,5 +1,3 @@
-from numpy import interp
-from rainbow import Rainbow
 from strip import Strip
 from piano import Piano
 
@@ -8,9 +6,9 @@ strip = Strip()
 
 while True:
     while piano.is_connected():
-        led = piano.get_input()
-        if led:
-            strip.add_led(led)
+        key, velocity = piano.get_input()
+        if key:
+            strip.add_led(key, velocity)
         strip.process()
         strip.show()
     else:

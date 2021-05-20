@@ -2,9 +2,8 @@ import os
 import mido
 import time
 
-from led import LED
+from settings import *
 
-PIANO_MIDI_PORT = 'Digital Piano:Digital Piano MIDI 1'
 
 class Piano:
     def __init__(self):
@@ -40,7 +39,8 @@ class Piano:
                 # TODO: Implement switching of color schemes and possible other functionalitys
                 print('SETTINGS MODE')
             if (key.type=='note_on'):
-                return LED(self.calc_index(key.note), key.velocity)
+                return self.calc_index(key.note), key.velocity
+        return None, None
 
     def is_connected(self):
         if self.connection and os.path.exists('/dev/midi1'):
