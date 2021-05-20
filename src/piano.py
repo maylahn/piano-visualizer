@@ -4,25 +4,22 @@ import time
 
 from settings import *
 
-
 class Piano:
     def __init__(self):
         self.connection = None
-        self.key_offset = 21
-        self.reconnect_timeout = 3
-        self.settings_timer = None
+        self.timer = None
 
     def connect(self):
         if os.path.exists('/dev/midi1'):
             self.connection = mido.open_input(PIANO_MIDI_PORT)
         else:
-            time.sleep(self.reconnect_timeout)
+            time.sleep(PIANO_RECONNECT_TIMER)
 
     def cleanup(self):
         self.connection = None
 
     def calc_index(self, note):
-        i = note - self.key_offset
+        i = note - PIANO_KEY_OFFSET
         if (i < 36):
             i = i * 2 + 1
         elif (i > 71):
@@ -34,10 +31,9 @@ class Piano:
     def get_input(self):
         for key in self.connection.iter_pending():
             if (key.type=='note_on' and self.calc_index(key.note) == 1 and key.velocity > 0):
-                self.settings_timer = time.process_time()
-            if (key.type=='note_on' and self.calc_index(key.note) == 1 and key.velocity <= 0 and (time.process_time() - self.settings_timer) > 1):
-                # TODO: Implement switching of color schemes and possible other functionalitys
-                print('SETTINGS MODE')
+                self.timer = time.process_time()
+            if (key.type=='note_on' and self.calc_index(key.note) == 1 and key.velocity <= 0 and (time.process_time() - self.timer) > PIANO_ACCESS_SETTINGS_MODE_TIMER):
+                return -1, None
             if (key.type=='note_on'):
                 return self.calc_index(key.note), key.velocity
         return None, None

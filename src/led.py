@@ -1,7 +1,7 @@
 from utils.color import Color
 
 class LED:
-    def __init__(self, index, velocity, touch_sensitive, fade_led, fade_speed, color_mode):
+    def __init__(self, index, velocity=100, touch_sensitive=False, fade_led=True, fade_speed=0.9, color_mode=Color(255, 255, 255)):
         self.index           = index
         self.velocity        = velocity
         self.is_pressed      = True
