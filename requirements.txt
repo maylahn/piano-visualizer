@@ -1,0 +1,3 @@
+mido
+python-rtmidi
+rpi-ws281x

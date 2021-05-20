@@ -4,6 +4,8 @@ import time
 
 from led import LED
 
+PIANO_MIDI_PORT = 'Digital Piano:Digital Piano MIDI 1'
+
 class Piano:
     def __init__(self):
         self.connection = None
@@ -13,7 +15,7 @@ class Piano:
 
     def connect(self):
         if os.path.exists('/dev/midi1'):
-            self.connection = mido.open_input('Digital Piano:Digital Piano MIDI 1')
+            self.connection = mido.open_input(PIANO_MIDI_PORT)
         else:
             time.sleep(self.reconnect_timeout)
 
@@ -35,6 +37,7 @@ class Piano:
             if (key.type=='note_on' and self.calc_index(key.note) == 1 and key.velocity > 0):
                 self.settings_timer = time.process_time()
             if (key.type=='note_on' and self.calc_index(key.note) == 1 and key.velocity <= 0 and (time.process_time() - self.settings_timer) > 1):
+                # TODO: Implement switching of color schemes and possible other functionalitys
                 print('SETTINGS MODE')
             if (key.type=='note_on'):
                 return LED(self.calc_index(key.note), key.velocity)

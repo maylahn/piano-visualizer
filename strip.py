@@ -1,6 +1,5 @@
 from rpi_ws281x import *
 
-# LED Settings
 LED_COUNT      = 176
 LED_PIN        = 18
 LED_FREQ_HZ    = 800000
@@ -36,7 +35,7 @@ class Strip:
     def set_color_mode(self, mode):
         pass
 
-    def config_mode():
+    def config_mode(self):
         if not self.config_mode:
             self.active.clear()
             for i in range(self.strip.numPixels()):
