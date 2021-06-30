@@ -1,6 +1,6 @@
 from numpy import interp
 from config import *
-
+import random
 
 class Color:
     def __init__(self, red, green, blue):
@@ -8,6 +8,32 @@ class Color:
         self.green = green
         self.blue = blue
         self.pulsing_direction = 5
+
+    @classmethod
+    def rgb(cls, r, g, b):
+        return cls(r, g, b)
+
+    @classmethod
+    def hex(cls, hex_color):
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+        return cls(r, g, b)
+
+    @classmethod
+    def name(cls, name):
+        if name in LED_DEFAULT_COLORS:
+            return cls.hex(LED_DEFAULT_COLORS[name])
+        else:
+            return cls.hex('FFFFFF')
+
+    @classmethod
+    def random(cls):
+        return cls.hex(random.choice(list(LED_DEFAULT_COLORS.values())))
+
+    @classmethod
+    def rainbow(cls):
+        return cls.hex(random.choice(list(LED_DEFAULT_COLORS.values())))
 
     def fade(self, fade_speed):
         self.red = int(self.red * fade_speed) if self.red > 0 else 0

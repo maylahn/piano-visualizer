@@ -3,7 +3,7 @@ from copy import deepcopy
 from config import *
 from utils.color import Color
 from mode import Mode
-
+import time
 
 class Strip:
     def __init__(self):
@@ -76,13 +76,8 @@ class Strip:
 
     def startup_sequence(self):
         self.clear()
-        for j in range(0, 40, 1):
-            for i in range(self.strip.numPixels()):
-                self.strip.setPixelColor(i, Color(0, 0, j).toLED())
-            self.show()
-        for j in range(40, 0, -1):
-            for i in range(self.strip.numPixels()):
-                self.strip.setPixelColor(i, Color(0, 0, j).toLED())
+        for i in range(self.strip.numPixels()):
+            self.strip.setPixelColor(i, Color.hex(LED_STARTUP_COLOR).toLED())
             self.show()
         self.clear()
 
