@@ -1,5 +1,5 @@
 from numpy import interp
-from config import *
+from settings import *
 import random
 
 class Color:
@@ -46,7 +46,7 @@ class Color:
         self.blue = int(interp(velocity, [25, 100], [1, self.blue]))
 
     def isOn(self):
-        return self.red + self.green + self.blue
+        return True if self.red + self.green + self.blue > 0 else False
 
     def toLED(self):
         return self.red << 16 | self.green << 8 | self.blue

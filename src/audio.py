@@ -1,7 +1,6 @@
 import pyaudio
-import struct
 import numpy as np
-from config import *
+from settings import *
 
 
 class Audio:

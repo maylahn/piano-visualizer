@@ -1,36 +1,42 @@
-from utils.color import Color
-
+from color import Color
 
 class LED:
     def __init__(
         self,
         index,
-        velocity=100,
+        velocity=20,
         touch_sensitive=False,
         fade_led=True,
         fade_speed=0.9,
-        color=Color(255, 255, 255),
+        default_color=Color.name('white'),
         pulsing=False,
     ):
         self.index = index
         self.velocity = velocity
-        self.is_pressed = True
         self.touch_sensitive = touch_sensitive
         self.fade_led = fade_led
         self.fade_speed = fade_speed
-        self.color = color
+        self.fade_hold = True
+        self.default_color = default_color
+        self.color = None
         self.pulsing = pulsing
+
 
     def process(self):
         if self.pulsing:
             self.color.pulsing()
             return
 
-        if not self.is_pressed:
-            if self.fade_led:
+        if self.fade_led:
+            if not self.fade_hold:
                 self.color.fade(self.fade_speed)
-            else:
-                self.color = Color(0, 0, 0)
+                if not self.color.isOn():
+                    self.color = None
+        else:
+            self.color = None
 
-            if self.touch_sensitive:
-                self.color = self.color.velocity(self.velocity)
+        if self.touch_sensitive:
+            self.color.velocity(self.velocity)
+
+    def __str__(self):
+        return "LED-Index: {}   Velocity: {}   Color: {}".format(self.index, self.velocity, self.default_color)
