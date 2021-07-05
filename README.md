@@ -18,7 +18,7 @@ sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-de
 ```
 
 ## Usage
-config.py includes all user specific settings
+settings.py and settings_colors.py includes all user specific settings
 * piano settings (Midi port, reconnect timer, midi offset etc.)
 * led settings (Number of leds, GPIO Pin etc.)
 * piano config mode settings
@@ -31,7 +31,6 @@ config.py includes all user specific settings
 * refactor the whole 'config mode' code.
 
 ### Medium Priority
-* fix the preset color modes/schemas (monochrome, multicolor, rainbow)
 * write a document for all config settings
 * write a document how to use the config mode
 
@@ -40,6 +39,12 @@ config.py includes all user specific settings
 
 
 ## Changelog
+### 0.4 (2011-07-05)
+- refactor the whole 'active mode' code.
+- now each mode has a own set of all 88 keys and their leds
+- Medium Priority: 'fix the preset color modes/schemas (monochrome, multicolor, rainbow)' works now as expected
+- old config mode doesn't work in this version
+
 ### 0.3 (2011-06-30)
 - format code with black
 - add licence
