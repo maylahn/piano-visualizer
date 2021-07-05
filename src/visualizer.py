@@ -1,18 +1,28 @@
-from strip import Strip
+import sys
 from piano import Piano
-from audio import Audio
 
-piano = Piano()
-strip = Strip()
-audio = Audio()
+if __name__ == '__main__':
+    args = sys.argv[1:]
 
-while True:
-    while piano.is_connected():
-        key, velocity, config = piano.get_input()
-        strip.process(key, velocity, config)
-        strip.show()
+    if args:
+        if args[0] == '--disable-mic':
+            piano = Piano(mic_active=False)
+        else:
+            print('Unregonized argument. exiting..')
+            sys.exit(0)
     else:
-        if piano.reconnect():
-            piano.setup()
-            strip.setup(piano.notes, audio)
-            strip.startup_sequence()
+        piano = Piano()
+
+    piano.init_led_strip()
+    piano.init_keyboard()
+    piano.init_color_modes()
+    piano.init_config_mode()
+    if piano.mic_active:
+        piano.init_audio()
+
+
+    while True:
+        while piano.is_connected():
+            piano.process_input()
+        else:
+            piano.reconnect()

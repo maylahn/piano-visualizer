@@ -1,61 +1,97 @@
+from settings import *
+from led import *
+from strip import Strip
 from copy import deepcopy
 
-from numpy import not_equal
-from config import *
-from led import *
-
-
 class Mode:
-    def __init__(self, name, index, color, touch_sensitive, fade_led, fade_speed):
+    def __init__(self, name, keyboard, color_scheme, color_split_keys, touch_sensitive, fade_led, fade_speed):
         self.name = name
-        self.index = index
-        self.leds = []
-        self.color = color
+        self.keyboard = keyboard
+        self.color_scheme = color_scheme
+        self.color_split_keys = color_split_keys
         self.touch_sensitive = touch_sensitive
         self.fade_led = fade_led
         self.fade_speed = fade_speed
 
-    def getConfigSetup(self, notes):
+    @staticmethod
+    def init_color_modes(keyboard):
+        modes = {
+            'monochrome': 
+            Mode(
+                name='monochrome',
+                keyboard=deepcopy(keyboard),
+                color_scheme=[Color.name('green')],
+                color_split_keys=None,
+                touch_sensitive=False,
+                fade_led=True,
+                fade_speed=0.95,
+            ),
+            'multicolor':
+            Mode(
+                name='multicolor',
+                keyboard=deepcopy(keyboard),
+                color_scheme=[Color.name('blue'), Color.name('red')],
+                color_split_keys=['E3'],
+                touch_sensitive=False,
+                fade_led=True,
+                fade_speed=0.95,
+            ),
+            'multicolor-2':
+            Mode(
+                name='multicolor-2',
+                keyboard=deepcopy(keyboard),
+                color_scheme=[Color.name('yellow'), Color.name('blue'), Color.name('green')],
+                color_split_keys=['C3', 'C5'],
+                touch_sensitive=False,
+                fade_led=True,
+                fade_speed=0.95,
+            ),
+            "rainbow":
+            Mode(
+                name='rainbow',
+                keyboard=deepcopy(keyboard),
+                color_scheme=Color.rainbow(),
+                color_split_keys=PIANO_NOTES,
+                touch_sensitive=False,
+                fade_led=True,
+                fade_speed=0.95,
+            )
+        }
 
-        for i in range(self.index):
-            self.leds.append(
-                LED(notes[CONFIG_MODE_INDEX[i]].led_index, color=Color(0, 20, 0))
+        for _, mode in modes.items():
+            mode.init_leds()
+
+        return modes
+
+    def init_leds(self):
+        colors = []
+        split_idx = 0
+        color_idx = 0
+
+        if self.color_split_keys:
+            for _, (_, key) in enumerate(self.keyboard.items()):
+                colors.append(self.color_scheme[color_idx])
+                if key.name == self.color_split_keys[split_idx]:
+                    if split_idx < len(self.color_split_keys) - 1:
+                        split_idx += 1
+                    color_idx += 1
+                    continue
+        else:
+            for _, (_, key) in enumerate(self.keyboard.items()):
+                colors.append(self.color_scheme[0])
+
+        for index, (_, key) in enumerate(self.keyboard.items()):
+            key.led = LED(
+                Strip.get_led_index(index),
+                touch_sensitive=self.touch_sensitive,
+                fade_led=self.fade_led,
+                fade_speed=self.fade_speed,
+                default_color=colors[index]
             )
 
-        for i, note in enumerate(PIANO_NOTES):
-            if note == CONFIG_COLOR_START:
-                for note in PIANO_NOTES[i:]:
-                    self.leds.append(LED(notes[note].led_index, color=self.color))
-
-        self.leds.append(
-            LED(
-                notes[CONFIG_NEXT_MODE].led_index,
-                color=Color(255, 255, 255),
-                pulsing=True,
-            )
-        )
-
-        self.leds.append(
-            LED(notes[CONFIG_RED].led_index, color=Color(self.color.red, 0, 0))
-        )
-        self.leds.append(
-            LED(notes[CONFIG_GREEN].led_index, color=Color(0, self.color.green, 0))
-        )
-        self.leds.append(
-            LED(notes[CONFIG_BLUE].led_index, color=Color(0, 0, self.color.blue))
-        )
-
-        self.leds.append(LED(notes[CONFIG_PLUS].led_index, color=Color(255, 255, 255)))
-        self.leds.append(LED(notes[CONFIG_MINUS].led_index, color=Color(20, 20, 20)))
-
-        return self.leds
-
-    def getLED(self, note, velocity):
-        return LED(
-            note.led_index,
-            velocity,
-            self.touch_sensitive,
-            self.fade_led,
-            self.fade_speed,
-            deepcopy(self.color),
-        )
+    def process(self, strip):
+        for _, key in list(self.keyboard.items()):
+            if key.led.color:
+                strip.setColor(key)
+                key.led.process()
+        strip.show()

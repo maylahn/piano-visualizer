@@ -2,76 +2,88 @@ import os
 import mido
 import time
 
-from config import *
-
+from copy import deepcopy
+from settings import *
+from strip import Strip
+from audio import Audio
+from mode import Mode
+from config_mode import ConfigMode
+from key import Key
 
 class Piano:
-    def __init__(self):
-        self.connection = None
-        self.timer = None
-        self.notes = {}
 
-    def setup(self):
-        for i, name in enumerate(PIANO_NOTES):
-            self.notes[name] = Note(
-                name, self.calculate_led_index(i), self.calculate_frequency(i)
-            )
+    def __init__(self, mic_active=False):
+        self.keyboard = None
+        self.mic_active = mic_active
+        self.access_settings_timer = None
+        self.midi_connection = None
+        self.modes = None
+        self.config_mode = None
+        self.active_mode = None
+        self.audio = None
+        self.strip = None
+        
 
-    def calculate_frequency(self, index):
-        return 440 * 2 ** ((index - 48) / 12)
+    def init_led_strip(self):
+        self.strip = Strip()
 
-    def calculate_led_index(self, i):
-        if i < 36:
-            i = i * 2 + 1
-        elif i > 71:
-            i = i * 2 - 1
-        else:
-            i = i * 2
-        return i
+    def init_audio(self):
+        self.audio = Audio()
 
-    def get_note(self, name):
-        return self.notes[name]
+    def init_config_mode(self):
+        self.config_mode = ConfigMode()
 
-    def get_note_name(self, note):
-        return PIANO_NOTES[note - PIANO_KEY_OFFSET]
+    def init_keyboard(self):
+        self.keyboard = Key.init_keys()
+
+    def init_color_modes(self):
+        self.modes = Mode.init_color_modes(self.keyboard)
+        self.active_mode = self.modes[PIANO_STARTUP_MODE] or self.modes['monochrome']
 
     def reconnect(self):
         if os.path.exists("/dev/midi"):
-            self.connection = mido.open_input(PIANO_MIDI_PORT)
+            self.midi_connection = mido.open_input(PIANO_MIDI_PORT)
             return True
         else:
-            self.connection = None
+            self.midi_connection = None
             time.sleep(PIANO_RECONNECT_TIMER)
             return False
 
-    def get_input(self):
-        for key in self.connection.iter_pending():
-            if key.type == "note_on":
-                if (
-                    self.get_note_name(key.note) == PIANO_ACCESS_CONFIG_MODE_NOTE
-                    and key.velocity > 0
-                ):
-                    self.timer = time.process_time()
-                if (
-                    self.get_note_name(key.note) == PIANO_ACCESS_CONFIG_MODE_NOTE
-                    and key.velocity <= 0
-                    and (time.process_time() - self.timer)
-                    > PIANO_ACCESS_SETTINGS_MODE_TIMER
-                ):
-                    return (
-                        self.get_note(self.get_note_name(key.note)),
-                        key.velocity,
-                        True,
-                    )
-                return self.get_note(self.get_note_name(key.note)), key.velocity, None
-        return None, None, None
-
     def is_connected(self):
-        return self.connection and os.path.exists("/dev/midi")
+        return self.midi_connection and os.path.exists("/dev/midi")
 
+    def update_key(self, msg):
+        key = self.active_mode.keyboard.get(Key.index_to_name(msg.note))
+        if msg.velocity > 0:
+            key.pressed = True
+            key.led.fade_hold = True
+            key.led.velocity = msg.velocity
+            key.led.set_color()
+        else:
+            key.pressed = False
+            key.led.fade_hold = False
+            key.velocity = msg.velocity
 
-class Note:
-    def __init__(self, name, led_index, freq):
-        self.name = name
-        self.led_index = led_index
-        self.freq = freq
+        return key
+
+    def start_timer(self):
+        self.access_settings_timer = time.process_time()
+
+    def stop_timer(self):
+        return time.process_time() - self.access_settings_timer
+
+    def process_input(self):
+        for msg in self.midi_connection.iter_pending():
+            if msg.type == "note_on":
+                key = self.update_key(msg)
+                if key.name == PIANO_ACCESS_CONFIG_MODE_NOTE and key.is_pressed():
+                    self.start_timer()
+                if key.name == PIANO_ACCESS_CONFIG_MODE_NOTE and not key.is_pressed():
+                    if self.stop_timer() > PIANO_ACCESS_SETTINGS_MODE_TIMER:
+                        self.config_mode.toggle()
+
+        if self.config_mode.is_active():
+            pass
+            #self.config_mode.process(self.strip, note)
+        else:
+            self.active_mode.process(self.strip)
