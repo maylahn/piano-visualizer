@@ -8,24 +8,6 @@ LED_DMA = 10
 LED_BRIGHTNESS = 100
 LED_INVERT = False
 LED_CHANNEL = 0
-LED_STARTUP_COLOR = "000010"
-LED_DEFAULT_COLORS = {
-    'white': 'FFFFFF',
-    'red': 'FF0000',
-    'lime':	'00FF00',
-    'blue':	'0000FF',
-    'yellow': 'FFFF00',
-    'cyan':	'00FFFF',
-    'magenta': 'FF00FF',
-    'silver': 'C0C0C0',
-    'gray':	'808080',
-    'maroon':'800000',
-    'olive': '808000',
-    'green': '008000',
-    'purple': '800080',
-    'teal':	'008080',
-    'navy':	'000080'	
-}
 
 # Piano Settings
 PIANO_NOTES = [
@@ -123,7 +105,7 @@ PIANO_RECONNECT_TIMER = 3
 PIANO_KEY_OFFSET = 21
 PIANO_ACCESS_SETTINGS_MODE_TIMER = 0.5
 PIANO_ACCESS_CONFIG_MODE_NOTE = "A0"
-PIANO_STARTUP_MODE = 'rainbow'
+PIANO_STARTUP_MODE = 'multicolor'
 
 
 # Config Mode Settings

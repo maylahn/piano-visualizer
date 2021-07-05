@@ -16,8 +16,6 @@ if __name__ == '__main__':
     piano.init_led_strip()
     piano.init_keyboard()
     piano.init_color_modes()
-    for _, mode in piano.modes.items():
-        mode.init_leds()
     piano.init_config_mode()
     if piano.mic_active:
         piano.init_audio()

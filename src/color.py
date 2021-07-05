@@ -1,5 +1,6 @@
 from numpy import interp
 from settings import *
+from settings_color import *
 import random
 
 class Color:
@@ -22,31 +23,40 @@ class Color:
 
     @classmethod
     def name(cls, name):
-        if name in LED_DEFAULT_COLORS:
-            return cls.hex(LED_DEFAULT_COLORS[name])
+        if name in DEFAULT_COLORS:
+            return cls.hex(DEFAULT_COLORS[name])
         else:
             return cls.hex('FFFFFF')
 
     @classmethod
     def random(cls):
-        return cls.hex(random.choice(list(LED_DEFAULT_COLORS.values())))
+        return cls.hex(random.choice(list(DEFAULT_COLORS.values())))
 
     @classmethod
     def rainbow(cls):
-        return cls.hex(random.choice(list(LED_DEFAULT_COLORS.values())))
+        rainbow = []
+        for color in RAINBOW:
+            rainbow.append(Color.hex(color))
+        return rainbow
 
     def fade(self, fade_speed):
         self.red = int(self.red * fade_speed) if self.red > 0 else 0
         self.green = int(self.green * fade_speed) if self.green > 0 else 0
         self.blue = int(self.blue * fade_speed) if self.blue > 0 else 0
 
-    def velocity(self, velocity):
-        self.red = int(interp(velocity, [25, 100], [1, self.red]))
-        self.green = int(interp(velocity, [25, 100], [1, self.green]))
-        self.blue = int(interp(velocity, [25, 100], [1, self.blue]))
+    def brightness(self, velocity):
+        self.red = int(interp(velocity, [25, 100], [0, self.red]))
+        self.green = int(interp(velocity, [25, 100], [0, self.green]))
+        self.blue = int(interp(velocity, [25, 100], [0, self.blue]))
+        return self
 
     def isOn(self):
         return True if self.red + self.green + self.blue > 0 else False
+
+    def off(self):
+        self.red = 0
+        self.green = 0
+        self.blue = 0
 
     def toLED(self):
         return self.red << 16 | self.green << 8 | self.blue

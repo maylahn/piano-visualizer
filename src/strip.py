@@ -1,6 +1,6 @@
 from rpi_ws281x import Adafruit_NeoPixel
-from copy import deepcopy
 from settings import *
+from settings_color import STARTUP_COLOR
 from color import Color
 
 class Strip:
@@ -20,7 +20,7 @@ class Strip:
     def startup_sequence(self):
         self.clear()
         for i in range(self.strip.numPixels()):
-            self.strip.setPixelColor(i, Color.hex(LED_STARTUP_COLOR).toLED())
+            self.strip.setPixelColor(i, Color.hex(STARTUP_COLOR).toLED())
             self.show()
         self.clear()
         self.show()
@@ -34,7 +34,6 @@ class Strip:
 
     def setColor(self, key):
         self.strip.setPixelColor(key.led.index, key.led.color.toLED())
-        self.show()
 
     @staticmethod
     def get_led_index(index):

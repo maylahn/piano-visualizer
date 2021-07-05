@@ -5,8 +5,8 @@ class Key:
         self.name = name
         self.freqeuncy = frequency
         self.led = None
-        self.pressed = False
-        self.velocity = 0
+        self.pressed = None
+        self.velocity = None
 
     @staticmethod
     def init_keys():
@@ -34,5 +34,8 @@ class Key:
             index = index * 2
         return index
 
+    def is_pressed(self):
+        return self.pressed
+        
     def __str__(self):
-        return "Name: {}, Pressed: {}, Velocity: {}".format(self.name, self.pressed, self.velocity)
+        return "Name: {}".format(self.name)
