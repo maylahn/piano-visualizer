@@ -31,7 +31,9 @@ class Color:
 
     @classmethod
     def random(cls):
-        return cls.hex(random.choice(list(DEFAULT_COLORS.values())))
+        return cls.rgb(
+            random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+        )
 
     def fade(self, fade_speed):
         self.red = int(self.red * fade_speed) if self.red > 0 else 0
