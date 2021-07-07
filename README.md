@@ -31,7 +31,9 @@ python3 visualizer.py <args>
 
 |arg|info|
 |-|-|
-|--disable-mic|disables the initialization of the 'FFT Mode'|
+|--disable-fft|disables the initialization of the 'FFT Mode'|
+|--show-midi|displays the midi input connected via USB (eg. 'Digital Piano:Digital Piano MIDI 1 16:0') which needs to be set in the settings.py|
+|--show-audio|displays all audio devices, where the microphone 'index' needs to be set in the settings.py|
 
 
 

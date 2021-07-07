@@ -29,7 +29,7 @@ class FFT(Mode):
         freq = self.audio.get_frequency()
         for _, key in list(self.keyboard.items()):
             if key.frequency == freq:
-                key.set_virtual_pressed()
+                key.set_pressed()
             if key.led.color:
                 strip.set_pixel_color(key.led)
                 key.led.process()

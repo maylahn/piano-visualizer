@@ -10,7 +10,7 @@ from key import Key
 
 
 class Piano:
-    def __init__(self, mic_active=True):
+    def __init__(self, fft_mode=True):
         self.access_settings_timer = None
         self.midi_connection = None
         self.keyboard = Key.init_keyboard()
@@ -21,7 +21,7 @@ class Piano:
             multicolor.Multicolor(self.keyboard),
             rainbow.Rainbow(self.keyboard),
         ]
-        if mic_active:
+        if fft_mode:
             self.modes += [fft.FFT(self.keyboard, Audio())]
         self.active_mode = (
             next((mode for mode in self.modes if mode.name == PIANO_STARTUP_MODE), None)
