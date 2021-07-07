@@ -32,6 +32,7 @@ class Piano:
     def reconnect(self):
         if os.path.exists("/dev/midi"):
             self.midi_connection = mido.open_input(PIANO_MIDI_PORT)
+            self.strip.startup_sequence()
             return True
         else:
             self.midi_connection = None
