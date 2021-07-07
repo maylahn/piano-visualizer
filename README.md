@@ -17,33 +17,51 @@ Also following Libraries are required:
 sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
 ```
 
-## Usage
-settings.py and settings_colors.py includes all user specific settings
+### settings.py includes all user specific settings
 * piano settings (Midi port, reconnect timer, midi offset etc.)
 * led settings (Number of leds, GPIO Pin etc.)
 * piano config mode settings
 * audio settings for FFT (Microphone index, sample rate etc.)
 
+
+## Usage
+```
+python3 visualizer.py <args>
+```
+
+|arg|info|
+|-|-|
+|--disable-mic|disables the initialization of the 'FFT Mode'|
+
+
+
+## Current features
+* Several 'Color Modes' switchable via a specific configured keyboard note
+* 'FFT Mode': Connected microphone gathers information from the enviorement and displays the nearest possible frequency on the led strip. Simply whistle a melody and play it back on your piano.
+* Automatic reconnection of the Piano. No need to restart the python app.
+* Fully customisable settings for the user in settings.py (Startup Mode, Startup Color, Reconnect Timer, ...)
+
 ## Future implementations
-
-### High Priority
-* fix first draft of an audio analyizer via the fast fourier transformation to make it usable (The goal is to whistle or sing a melody and the specific LEDs for that frequency light up, so you can easily play it back)
-* refactor the whole 'config mode' code.
-
-### Medium Priority
-* write a document for all config settings
-* write a document how to use the config mode
-
-### Low Priority
+* Add Config mode to manually adjust colors / properties of a mode
+* write a documentation how to use the config mode
+* Add More color modes
+* write a documentation for all config settings
 * implement a setup routine for other pianos
 
 
 ## Changelog
+### 0.5 (2011-07-07)
+- refactored modes to use an abstract class for easy creation of new modes
+- fixed and added fft mode again 
+- add possibility to change modes since the whole config mode doesn't exist anymore
+
+
 ### 0.4 (2011-07-05)
 - refactor the whole 'active mode' code.
 - now each mode has a own set of all 88 keys and their leds
 - Medium Priority: 'fix the preset color modes/schemas (monochrome, multicolor, rainbow)' works now as expected
-- old config mode doesn't work in this version
+- implemented config mode doesn't work in this version anymore
+- implemented fft mode doesn't work in this version anymore
 
 ### 0.3 (2011-06-30)
 - format code with black
