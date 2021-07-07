@@ -1,6 +1,7 @@
 from color import Color
 from copy import deepcopy
 
+
 class LED:
     def __init__(
         self,
@@ -9,8 +10,8 @@ class LED:
         touch_sensitive=False,
         fade_led=True,
         fade_speed=0.9,
-        default_color=Color.name('white'),
-        #pulsing=False,
+        default_color=Color.name("white"),
+        # pulsing=False,
     ):
         self.index = index
         self.velocity = velocity
@@ -20,7 +21,7 @@ class LED:
         self.fade_hold = True
         self.default_color = default_color
         self.color = None
-        #self.pulsing = pulsing
+        # self.pulsing = pulsing
 
     def set_color(self):
         if self.touch_sensitive:
@@ -37,13 +38,14 @@ class LED:
             else:
                 if self.color.isOn():
                     self.color.off()
-                else: 
+                else:
                     self.color = None
 
-        
-        #if self.pulsing:
+        # if self.pulsing:
         #    self.color.pulsing()
         #    return
 
     def __str__(self):
-        return "LED-Index: {}   Velocity: {}   Color: {}".format(self.index, self.velocity, self.color)
+        return "LED-Index: {}   Velocity: {}   Color: {}".format(
+            self.index, self.velocity, self.color
+        )

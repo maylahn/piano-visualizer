@@ -3,6 +3,7 @@ from settings import *
 from settings_color import *
 import random
 
+
 class Color:
     def __init__(self, red, green, blue):
         self.red = red
@@ -26,18 +27,11 @@ class Color:
         if name in DEFAULT_COLORS:
             return cls.hex(DEFAULT_COLORS[name])
         else:
-            return cls.hex('FFFFFF')
+            return cls.hex("FFFFFF")
 
     @classmethod
     def random(cls):
         return cls.hex(random.choice(list(DEFAULT_COLORS.values())))
-
-    @classmethod
-    def rainbow(cls):
-        rainbow = []
-        for color in RAINBOW:
-            rainbow.append(Color.hex(color))
-        return rainbow
 
     def fade(self, fade_speed):
         self.red = int(self.red * fade_speed) if self.red > 0 else 0

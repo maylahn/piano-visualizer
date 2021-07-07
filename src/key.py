@@ -1,20 +1,19 @@
 from settings import *
 
+
 class Key:
-    def __init__(self, name, frequency):
-        self.name = name
+    def __init__(self, note, frequency):
+        self.note = note
         self.frequency = frequency
         self.led = None
         self.pressed = None
         self.velocity = None
 
     @staticmethod
-    def init_keys():
+    def init_keyboard():
         keyboard = {}
-        for index, name in enumerate(PIANO_NOTES, 1):
-            keyboard[name] = Key(
-                name, Key.get_frequency(index)
-            )
+        for index, note in enumerate(PIANO_NOTES, 1):
+            keyboard[note] = Key(note, Key.get_frequency(index))
         return keyboard
 
     @staticmethod
@@ -42,7 +41,7 @@ class Key:
         self.led.velocity = 100
         self.led.set_color()
 
-    def get_led_index(index):
+    def get_led_index(self, index):
         if index < 36:
             index = index * 2 + 1
         elif index > 71:
@@ -53,6 +52,6 @@ class Key:
 
     def is_pressed(self):
         return self.pressed
-        
+
     def __str__(self):
-        return "Name: {}".format(self.name)
+        return "Note: {}".format(self.note)

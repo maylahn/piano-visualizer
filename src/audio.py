@@ -4,7 +4,6 @@ from settings import *
 
 
 class Audio:
-
     def __init__(self):
         self.piano_frequencies = self.calculate_frequencies()
         self.audio = pyaudio.PyAudio()

@@ -3,6 +3,7 @@ from settings import *
 from settings_color import STARTUP_COLOR
 from color import Color
 
+
 class Strip:
     def __init__(self):
         self.strip = Adafruit_NeoPixel(
@@ -34,13 +35,3 @@ class Strip:
 
     def setColor(self, key):
         self.strip.setPixelColor(key.led.index, key.led.color.toLED())
-
-    @staticmethod
-    def get_led_index(index):
-        if index < 36:
-            index = index * 2 + 1
-        elif index > 71:
-            index = index * 2 - 1
-        else:
-            index = index * 2
-        return index
