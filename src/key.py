@@ -3,7 +3,7 @@ from settings import *
 class Key:
     def __init__(self, name, frequency):
         self.name = name
-        self.freqeuncy = frequency
+        self.frequency = frequency
         self.led = None
         self.pressed = None
         self.velocity = None
@@ -19,11 +19,28 @@ class Key:
 
     @staticmethod
     def get_frequency(index):
-        return 440 * 2 ** ((index - 48) / 12)
+        return 440 * 2 ** ((index - 49) / 12)
 
     @staticmethod
     def index_to_name(key):
         return PIANO_NOTES[key - PIANO_KEY_OFFSET]
+
+    def set_pressed(self, velocity):
+        self.pressed = True
+        self.led.fade_hold = True
+        self.led.velocity = velocity
+        self.led.set_color()
+
+    def set_released(self, velocity):
+        self.pressed = False
+        self.led.fade_hold = False
+        self.velocity = velocity
+
+    def set_virtual_pressed(self):
+        self.pressed = True
+        self.led.fade_hold = False
+        self.led.velocity = 100
+        self.led.set_color()
 
     def get_led_index(index):
         if index < 36:

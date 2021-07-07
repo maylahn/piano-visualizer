@@ -4,7 +4,7 @@ from strip import Strip
 from copy import deepcopy
 
 class Mode:
-    def __init__(self, name, keyboard, color_scheme, color_split_keys, touch_sensitive, fade_led, fade_speed):
+    def __init__(self, name, keyboard, color_scheme, color_split_keys, touch_sensitive, fade_led, fade_speed, audio=None):
         self.name = name
         self.keyboard = keyboard
         self.color_scheme = color_scheme
@@ -12,9 +12,10 @@ class Mode:
         self.touch_sensitive = touch_sensitive
         self.fade_led = fade_led
         self.fade_speed = fade_speed
+        self.audio = audio
 
     @staticmethod
-    def init_color_modes(keyboard):
+    def init_color_modes(keyboard, audio=None):
         modes = {
             'monochrome': 
             Mode(
@@ -57,10 +58,19 @@ class Mode:
                 fade_speed=0.95,
             )
         }
-
+        if audio:
+            modes['fft'] = Mode(
+                name='fft',
+                keyboard=deepcopy(keyboard),
+                color_scheme=[Color.name('red')],
+                color_split_keys=None,
+                touch_sensitive=False,
+                fade_led=False,
+                fade_speed=0.95,
+                audio=audio
+            )
         for _, mode in modes.items():
             mode.init_leds()
-
         return modes
 
     def init_leds(self):
@@ -90,8 +100,18 @@ class Mode:
             )
 
     def process(self, strip):
-        for _, key in list(self.keyboard.items()):
-            if key.led.color:
-                strip.setColor(key)
-                key.led.process()
-        strip.show()
+        if self.audio:
+            freq = self.audio.get_frequency()
+            for _, key in list(self.keyboard.items()):
+                if key.frequency == freq:
+                    key.set_virtual_pressed()
+                if key.led.color:
+                    strip.setColor(key)
+                    key.led.process()
+            strip.show()
+        else:
+            for _, key in list(self.keyboard.items()):
+                if key.led.color:
+                    strip.setColor(key)
+                    key.led.process()
+            strip.show()

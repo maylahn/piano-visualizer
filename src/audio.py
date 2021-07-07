@@ -4,6 +4,7 @@ from settings import *
 
 
 class Audio:
+
     def __init__(self):
         self.piano_frequencies = self.calculate_frequencies()
         self.audio = pyaudio.PyAudio()
@@ -16,7 +17,6 @@ class Audio:
             frames_per_buffer=AUDIO_CHUNK_SIZE,
         )
         self.stream.start_stream()
-        self.max = 0
 
     def find_nearest(self, value):
         array = np.asarray(self.piano_frequencies)
@@ -34,11 +34,11 @@ class Audio:
         data_in = np.frombuffer(data, dtype=np.int16)
         data_fft = np.fft.rfft(data_in) / ((len(data_in) // 2))
         max_mag = 20 * np.log10(np.max(np.abs(data_fft)))
-
         if max_mag < AUDIO_DECIBEL_THRESHHOLD:
             return None
         else:
             index = np.argmax(np.abs(data_fft))
             freq = np.fft.fftfreq(AUDIO_CHUNK_SIZE, d=1 / AUDIO_SAMPLE_RATE)
-            # print(freq[index])
-            return self.find_nearest(freq[index])
+            nearest_freq = self.find_nearest(freq[index])
+            if nearest_freq > AUDIO_FREQ_MIN and nearest_freq < AUDIO_FREQ_MAX:
+                return nearest_freq

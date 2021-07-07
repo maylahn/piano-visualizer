@@ -12,33 +12,17 @@ from key import Key
 
 class Piano:
 
-    def __init__(self, mic_active=False):
-        self.keyboard = None
-        self.mic_active = mic_active
+    def __init__(self, mic_active=True):
         self.access_settings_timer = None
         self.midi_connection = None
-        self.modes = None
-        self.config_mode = None
-        self.active_mode = None
-        self.audio = None
-        self.strip = None
-        
-
-    def init_led_strip(self):
-        self.strip = Strip()
-
-    def init_audio(self):
-        self.audio = Audio()
-
-    def init_config_mode(self):
-        self.config_mode = ConfigMode()
-
-    def init_keyboard(self):
+        if mic_active:
+            self.audio = Audio()
         self.keyboard = Key.init_keys()
-
-    def init_color_modes(self):
-        self.modes = Mode.init_color_modes(self.keyboard)
+        self.modes = Mode.init_color_modes(self.keyboard, self.audio)
+        self.config_mode = ConfigMode()
         self.active_mode = self.modes[PIANO_STARTUP_MODE] or self.modes['monochrome']
+
+        self.strip = Strip()
 
     def reconnect(self):
         if os.path.exists("/dev/midi"):
@@ -54,16 +38,11 @@ class Piano:
 
     def update_key(self, msg):
         key = self.active_mode.keyboard.get(Key.index_to_name(msg.note))
-        if msg.velocity > 0:
-            key.pressed = True
-            key.led.fade_hold = True
-            key.led.velocity = msg.velocity
-            key.led.set_color()
-        else:
-            key.pressed = False
-            key.led.fade_hold = False
-            key.velocity = msg.velocity
-
+        if not self.active_mode.name == 'fft':
+            if msg.velocity > 0 :
+                key.set_pressed(msg.velocity)
+            else:
+                key.set_released(msg.velocity)
         return key
 
     def start_timer(self):

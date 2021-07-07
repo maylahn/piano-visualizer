@@ -13,14 +13,6 @@ if __name__ == '__main__':
     else:
         piano = Piano()
 
-    piano.init_led_strip()
-    piano.init_keyboard()
-    piano.init_color_modes()
-    piano.init_config_mode()
-    if piano.mic_active:
-        piano.init_audio()
-
-
     while True:
         while piano.is_connected():
             piano.process_input()
