@@ -1,4 +1,5 @@
 from settings import *
+import time
 
 
 class Key:
@@ -24,22 +25,22 @@ class Key:
     def index_to_name(key):
         return PIANO_NOTES[key - PIANO_KEY_OFFSET]
 
-    def set_pressed(self, velocity):
+    def set_hold(self, velocity=100):
         self.pressed = True
         self.led.fade_hold = True
         self.led.velocity = velocity
         self.led.set_color()
 
-    def set_released(self, velocity):
+    def set_pressed(self, velocity=100):
         self.pressed = False
         self.led.fade_hold = False
-        self.velocity = velocity
-
-    def set_virtual_pressed(self):
-        self.pressed = True
-        self.led.fade_hold = False
-        self.led.velocity = 100
+        self.led.velocity = velocity
         self.led.set_color()
+
+    def set_released(self):
+        self.pressed = False
+        self.led.fade_hold = False
+        self.velocity = 0
 
     def get_led_index(self, index):
         if index < 36:

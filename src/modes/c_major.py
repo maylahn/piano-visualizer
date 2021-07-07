@@ -4,15 +4,21 @@ from copy import deepcopy
 from .abstract_mode import Mode
 
 
-class Multicolor(Mode):
+class cMajor(Mode):
     def __init__(self, keyboard):
-        super().__init__("multicolor", deepcopy(keyboard))
+        super().__init__("c_major", deepcopy(keyboard))
         self.color_scheme = [
-            Color.name("yellow"),
-            Color.name("blue"),
-            Color.name("green"),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
+            Color.random(),
         ]
-        self.color_split_keys = ["C3", "C5"]
+        self.color_split_keys = ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"]
         self.touch_sensitive = False
         self.fade_led = True
         self.fade_speed = 0.95

@@ -33,5 +33,5 @@ class Strip:
     def show(self):
         self.strip.show()
 
-    def setColor(self, key):
-        self.strip.setPixelColor(key.led.index, key.led.color.toLED())
+    def set_pixel_color(self, led):
+        self.strip.setPixelColor(led.index, led.color.toLED())

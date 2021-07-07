@@ -5,7 +5,7 @@ import time
 from settings import *
 from strip import Strip
 from audio import Audio
-from modes import dualcolor, fft, monochrome, multicolor, rainbow
+from modes import dualcolor, fft, monochrome, multicolor, rainbow, c_major
 from key import Key
 
 
@@ -15,6 +15,7 @@ class Piano:
         self.midi_connection = None
         self.keyboard = Key.init_keyboard()
         self.modes = [
+            c_major.cMajor(self.keyboard),
             dualcolor.Dualcolor(self.keyboard),
             monochrome.Monochrome(self.keyboard),
             multicolor.Multicolor(self.keyboard),
@@ -43,9 +44,9 @@ class Piano:
     def update_keyboard(self, msg):
         key = self.active_mode.keyboard.get(Key.index_to_name(msg.note))
         if msg.velocity > 0:
-            key.set_pressed(msg.velocity)
+            key.set_hold(msg.velocity)
         else:
-            key.set_released(msg.velocity)
+            key.set_released()
         return key
 
     def start_timer(self):
@@ -61,6 +62,7 @@ class Piano:
                     self.modes[idx + 1] if len(self.modes) > idx + 1 else self.modes[0]
                 )
                 break
+        self.active_mode.show(self.strip)
 
     def process_input(self):
         for msg in self.midi_connection.iter_pending():

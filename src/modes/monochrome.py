@@ -1,6 +1,5 @@
 from settings import *
 from led import *
-from strip import Strip
 from copy import deepcopy
 from .abstract_mode import Mode
 
@@ -11,7 +10,7 @@ class Monochrome(Mode):
         self.color_scheme = Color.name("green")
         self.color_split_keys = None
         self.touch_sensitive = False
-        self.fade_led = (True,)
+        self.fade_led = True
         self.fade_speed = 0.95
         self.init_leds()
 
@@ -28,6 +27,6 @@ class Monochrome(Mode):
     def process(self, strip):
         for _, key in list(self.keyboard.items()):
             if key.led.color:
-                strip.setColor(key)
+                strip.set_pixel_color(key.led)
                 key.led.process()
         strip.show()

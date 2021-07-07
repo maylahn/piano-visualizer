@@ -1,6 +1,5 @@
 from settings import *
 from led import *
-from strip import Strip
 from copy import deepcopy
 from .abstract_mode import Mode
 
@@ -32,6 +31,6 @@ class FFT(Mode):
             if key.frequency == freq:
                 key.set_virtual_pressed()
             if key.led.color:
-                strip.setColor(key)
+                strip.set_pixel_color(key.led)
                 key.led.process()
         strip.show()

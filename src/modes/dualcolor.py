@@ -1,6 +1,5 @@
 from settings import *
 from led import *
-from strip import Strip
 from copy import deepcopy
 from .abstract_mode import Mode
 
@@ -40,6 +39,6 @@ class Dualcolor(Mode):
     def process(self, strip):
         for _, key in list(self.keyboard.items()):
             if key.led.color:
-                strip.setColor(key)
+                strip.set_pixel_color(key.led)
                 key.led.process()
         strip.show()
