@@ -6,12 +6,22 @@ import pyaudio
 from piano import Piano
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Piano LED Visualizer with an LED Strip')
+    parser = argparse.ArgumentParser(
+        description="Piano LED Visualizer with an LED Strip"
+    )
 
-    parser.add_argument('run', help='runs the visualization')
-    parser.add_argument('--show-midi', help='display all midi input names', action="store_true")
-    parser.add_argument('--show-audio', help='display all audio devices', action="store_true")
-    parser.add_argument('--disable-fft', help='disables the initialization of the "FFT Mode"', action="store_true")
+    parser.add_argument("run", help="runs the visualization")
+    parser.add_argument(
+        "--show-midi", help="display all midi input names", action="store_true"
+    )
+    parser.add_argument(
+        "--show-audio", help="display all audio devices", action="store_true"
+    )
+    parser.add_argument(
+        "--disable-fft",
+        help='disables the initialization of the "FFT Mode"',
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -27,7 +37,6 @@ if __name__ == "__main__":
         piano = Piano(fft_mode=False)
     else:
         piano = Piano()
-
 
     while True:
         while piano.is_connected():
