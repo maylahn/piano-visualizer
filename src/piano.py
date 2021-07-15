@@ -5,8 +5,9 @@ import time
 from settings import *
 from strip import Strip
 from audio import Audio
-from modes import dualcolor, fft, monochrome, multicolor, rainbow, c_major
+from modes import dualcolor, fft, monochrome, multicolor, rainbow, c_major, explode
 from key import Key
+from state import State
 
 
 class Piano:
@@ -15,6 +16,7 @@ class Piano:
         self.midi_connection = None
         self.keyboard = Key.init_keyboard()
         self.modes = [
+            explode.Explode(self.keyboard),
             c_major.cMajor(self.keyboard),
             dualcolor.Dualcolor(self.keyboard),
             monochrome.Monochrome(self.keyboard),
@@ -42,12 +44,12 @@ class Piano:
     def is_connected(self):
         return self.midi_connection and os.path.exists("/dev/midi")
 
-    def update_keyboard(self, msg):
+    def update_state(self, msg):
         key = self.active_mode.keyboard.get(Key.index_to_name(msg.note))
-        if msg.velocity > 0:
-            key.set_hold(msg.velocity)
-        else:
-            key.set_released()
+        if key.state == State.Released and msg.velocity > 0:
+            key.set_pressed(msg.velocity)
+        elif msg.velocity == 0:
+            key.set_released(msg.velocity)
         return key
 
     def start_timer(self):
@@ -68,10 +70,16 @@ class Piano:
     def process_input(self):
         for msg in self.midi_connection.iter_pending():
             if msg.type == "note_on":
-                key = self.update_keyboard(msg)
-                if key.note == PIANO_ACCESS_CONFIG_MODE_NOTE and key.is_pressed():
+                key = self.update_state(msg)
+                if (
+                    key.note == PIANO_ACCESS_CONFIG_MODE_NOTE
+                    and key.state == State.Pressed
+                ):
                     self.start_timer()
-                if key.note == PIANO_ACCESS_CONFIG_MODE_NOTE and not key.is_pressed():
+                if (
+                    key.note == PIANO_ACCESS_CONFIG_MODE_NOTE
+                    and key.state == State.Released
+                ):
                     if self.stop_timer() > PIANO_ACCESS_SETTINGS_MODE_TIMER:
                         self.next_mode()
         self.active_mode.process(self.strip)

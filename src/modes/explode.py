@@ -3,9 +3,10 @@ from led import *
 from copy import deepcopy
 from .abstract_mode import Mode
 from state import State
+from numpy import interp
 
 
-class Rainbow(Mode):
+class Explode(Mode):
     rainbow_colors = [
         Color.hex("ff0000"),
         Color.hex("ff0d00"),
@@ -98,11 +99,13 @@ class Rainbow(Mode):
     ]
 
     def __init__(self, keyboard):
-        super().__init__("rainbow", deepcopy(keyboard))
+        super().__init__("explode", deepcopy(keyboard))
         self.color_scheme = self.rainbow_colors
         self.color_split_keys = PIANO_NOTES
+        self.radius = 10
+        self.radius_list = list(range(-self.radius, self.radius + 1))
         self.fade_led = True
-        self.fade_speed = 0.95
+        self.fade_speed = 0.97
         self.init_leds()
 
     def init_leds(self):
@@ -124,13 +127,45 @@ class Rainbow(Mode):
                 fade_speed=self.fade_speed,
                 default_color=colors[index],
             )
+            key.explode_radius = 0
+
+    def set_color(self):
+        for i, (_, obj) in enumerate(self.keyboard.items()):
+            if obj.explode_radius:
+                for j, key in enumerate(
+                    list(self.keyboard)[
+                        i
+                        - self.radius
+                        + obj.explode_radius : i
+                        + self.radius
+                        - obj.explode_radius
+                        + 1
+                    ]
+                ):
+                    velocity = int(
+                        interp(
+                            self.radius_list[j],
+                            [
+                                self.radius_list[0],
+                                0,
+                                self.radius_list[len(self.radius_list) - 1],
+                            ],
+                            [30, 100, 30],
+                        )
+                    )
+                    if not self.keyboard[key].explode_radius:
+                        self.keyboard[key].led.set_color(velocity=velocity)
 
     def process(self, strip):
+        self.set_color()
         for _, key in self.keyboard.items():
             if key.state == State.Pressed:
                 key.state = State.Hold
                 key.led.set_color()
+                key.explode_radius = self.radius
             if key.state == State.Released and key.led.color:
+                if key.explode_radius > 0:
+                    key.explode_radius -= 1
                 key.led.process()
 
         strip.set_color(self.keyboard)

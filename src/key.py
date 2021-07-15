@@ -1,58 +1,52 @@
 from settings import *
-import time
+from state import State
 
 
 class Key:
-    def __init__(self, note, frequency):
+    def __init__(self, index, note):
+        self.index = index
         self.note = note
-        self.frequency = frequency
+        self.led_index = self.get_led_index()
+        self.frequency = self.get_frequency()
+        self.state = State.Released
+        self.velocity = 0
         self.led = None
-        self.pressed = None
-        self.velocity = None
 
     @staticmethod
     def init_keyboard():
         keyboard = {}
-        for index, note in enumerate(PIANO_NOTES, 1):
-            keyboard[note] = Key(note, Key.get_frequency(index))
+        for index, note in enumerate(PIANO_NOTES, 0):
+            keyboard[note] = Key(index, note)
         return keyboard
-
-    @staticmethod
-    def get_frequency(index):
-        return 440 * 2 ** ((index - 49) / 12)
 
     @staticmethod
     def index_to_name(key):
         return PIANO_NOTES[key - PIANO_KEY_OFFSET]
 
-    def set_hold(self, velocity=100):
-        self.pressed = True
-        self.led.fade_hold = True
-        self.led.velocity = velocity
-        self.led.set_color()
+    def get_frequency(self):
+        return 440 * 2 ** ((self.index - 48) / 12)
+
+    def get_led_index(self):
+        if self.index < 36:
+            return self.index * 2 + 1
+        elif self.index > 71:
+            return self.index * 2 - 1
+        else:
+            return self.index * 2
 
     def set_pressed(self, velocity=100):
-        self.pressed = False
-        self.led.fade_hold = False
+        self.state = State.Pressed
+        self.velocity = velocity
         self.led.velocity = velocity
-        self.led.set_color()
+        self.led.fade_hold = True
 
-    def set_released(self):
-        self.pressed = False
+    def set_released(self, velocity=0):
+        self.state = State.Released
+        self.velocity = velocity
+        self.led.velocity = velocity
         self.led.fade_hold = False
-        self.velocity = 0
-
-    def get_led_index(self, index):
-        if index < 36:
-            index = index * 2 + 1
-        elif index > 71:
-            index = index * 2 - 1
-        else:
-            index = index * 2
-        return index
-
-    def is_pressed(self):
-        return self.pressed
 
     def __str__(self):
-        return "Note: {}".format(self.note)
+        return "Note: {}  State: {}    Velocity: {}".format(
+            self.note, self.state, self.velocity
+        )

@@ -1,6 +1,7 @@
 from rpi_ws281x import Adafruit_NeoPixel
 from settings import *
 from color import Color
+from key import Key
 
 
 class Strip:
@@ -31,5 +32,10 @@ class Strip:
     def show(self):
         self.strip.show()
 
-    def set_pixel_color(self, led):
-        self.strip.setPixelColor(led.index, led.color.toLED())
+    def set_color(self, obj):
+        if type(obj) == Key:
+            self.strip.setPixelColor(obj.led_index, obj.led.color.toLED())
+        else:
+            for _, key in obj.items():
+                if key.led.color:
+                    self.strip.setPixelColor(key.led_index, key.led.color.toLED())
