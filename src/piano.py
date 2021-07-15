@@ -16,15 +16,15 @@ class Piano:
         self.midi_connection = None
         self.keyboard = Key.init_keyboard()
         self.modes = [
-            explode.Explode(self.keyboard),
-            c_major.cMajor(self.keyboard),
-            dualcolor.Dualcolor(self.keyboard),
-            monochrome.Monochrome(self.keyboard),
-            multicolor.Multicolor(self.keyboard),
+            #explode.Explode(self.keyboard),
+            #c_major.cMajor(self.keyboard),
+            #dualcolor.Dualcolor(self.keyboard),
+            #monochrome.Monochrome(self.keyboard),
+            #multicolor.Multicolor(self.keyboard),
             rainbow.Rainbow(self.keyboard),
         ]
         if fft_mode:
-            self.modes += [fft.FFT(self.keyboard, Audio())]
+            self.modes += [fft.FFT(self.keyboard)]
         self.active_mode = (
             next((mode for mode in self.modes if mode.name == PIANO_STARTUP_MODE), None)
             or self.modes[0]
@@ -59,6 +59,9 @@ class Piano:
         return time.time() - self.access_settings_timer
 
     def next_mode(self):
+        if self.active_mode.name == 'fft':
+            self.active_mode.stop_audio()
+
         for idx, mode in enumerate(self.modes):
             if mode == self.active_mode:
                 self.active_mode = (
@@ -66,6 +69,8 @@ class Piano:
                 )
                 break
         self.active_mode.show(self.strip)
+        if self.active_mode.name == 'fft':
+            self.active_mode.start_audio()
 
     def process_input(self):
         for msg in self.midi_connection.iter_pending():
