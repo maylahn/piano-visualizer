@@ -1,17 +1,16 @@
 from color import Color
 from copy import deepcopy
+from settings import LED_FADE_SPEED_WITH_SUSTAIN, LED_FADE_SPEED_WITHOUT_SUSTAIN
 
 
 class LED:
     def __init__(
         self,
-        fade_led=True,
-        fade_speed=0.9,
+        fading=True,
         default_color=Color.name("white"),
     ):
-        self.fade_led = fade_led
-        self.fade_speed = fade_speed
-        self.fade_hold = False
+        self.fading = fading
+        self.force_control = False
         self.default_color = default_color
         self.color = None
 
@@ -21,10 +20,13 @@ class LED:
         else:
             self.color = deepcopy(self.default_color).brightness(velocity)
 
-    def process(self):
-        if not self.fade_hold:
-            if self.fade_led:
-                self.color.fade(self.fade_speed)
+    def process(self, sustain):
+        if not self.force_control:
+            if self.fading:
+                if sustain:
+                    self.color.fade(LED_FADE_SPEED_WITH_SUSTAIN)
+                else:
+                    self.color.fade(LED_FADE_SPEED_WITHOUT_SUSTAIN)
                 if not self.color.isOn():
                     self.color = None
             else:

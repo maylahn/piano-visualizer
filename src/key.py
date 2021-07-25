@@ -21,7 +21,7 @@ class Key:
 
     @staticmethod
     def index_to_name(key):
-        return PIANO_NOTES[key - PIANO_KEY_OFFSET]
+        return PIANO_NOTES[key - MIDI_OFFSET]
 
     def get_frequency(self):
         return 440 * 2 ** ((self.index - 48) / 12)
@@ -37,14 +37,10 @@ class Key:
     def set_pressed(self, velocity=100):
         self.state = State.Pressed
         self.velocity = velocity
-        self.led.velocity = velocity
-        self.led.fade_hold = True
 
     def set_released(self, velocity=0):
         self.state = State.Released
         self.velocity = velocity
-        self.led.velocity = velocity
-        self.led.fade_hold = False
 
     def __str__(self):
         return "Note: {}  State: {}    Velocity: {}".format(

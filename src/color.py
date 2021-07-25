@@ -74,58 +74,22 @@ class Color:
     def toLED(self):
         return self.red << 16 | self.green << 8 | self.blue
 
-    def change(self, rgb, value):
-        if value > 0:
-            if rgb == CONFIG_RED:
-                self.red = self.red + value if self.red + value < 255 else 255
-            if rgb == CONFIG_GREEN:
-                self.green = self.green + value if self.green + value < 255 else 255
-            if rgb == CONFIG_BLUE:
-                self.blue = self.blue + value if self.blue + value < 255 else 255
-        if value < 0:
-            if rgb == CONFIG_RED:
-                self.red = self.red + value if self.red + value > 0 else 0
-            if rgb == CONFIG_GREEN:
-                self.green = self.green + value if self.green + value > 0 else 0
-            if rgb == CONFIG_BLUE:
-                self.blue = self.blue + value if self.blue + value > 0 else 0
-
-    def pulsing(self):
+    def pulse(self):
         if self.pulsing_direction > 0:
             self.red = (
                 self.red + self.pulsing_direction
                 if self.red + self.pulsing_direction < 255
                 else 255
             )
-            self.green = (
-                self.green + self.pulsing_direction
-                if self.green + self.pulsing_direction < 255
-                else 255
-            )
-            self.blue = (
-                self.blue + self.pulsing_direction
-                if self.blue + self.pulsing_direction < 255
-                else 255
-            )
-            if self.red == 255 and self.green == 255 and self.blue == 255:
+            if self.red == 255:
                 self.pulsing_direction *= -1
-        if self.pulsing_direction < 0:
+        else:
             self.red = (
                 self.red + self.pulsing_direction
                 if self.red + self.pulsing_direction > 0
                 else 0
             )
-            self.green = (
-                self.green + self.pulsing_direction
-                if self.green + self.pulsing_direction > 0
-                else 0
-            )
-            self.blue = (
-                self.blue + self.pulsing_direction
-                if self.blue + self.pulsing_direction > 0
-                else 0
-            )
-            if self.red == 0 and self.green == 0 and self.blue == 0:
+            if self.red == 0:
                 self.pulsing_direction *= -1
 
     def __str__(self):

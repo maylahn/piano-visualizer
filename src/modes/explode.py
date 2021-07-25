@@ -104,8 +104,7 @@ class Explode(Mode):
         self.color_split_keys = PIANO_NOTES
         self.radius = 10
         self.radius_list = list(range(-self.radius, self.radius + 1))
-        self.fade_led = True
-        self.fade_speed = 0.97
+        self.fading = True
         self.init_leds()
 
     def init_leds(self):
@@ -123,8 +122,7 @@ class Explode(Mode):
 
         for index, (_, key) in enumerate(self.keyboard.items()):
             key.led = LED(
-                fade_led=self.fade_led,
-                fade_speed=self.fade_speed,
+                fading=self.fading,
                 default_color=colors[index],
             )
             key.explode_radius = 0
@@ -166,7 +164,7 @@ class Explode(Mode):
             if key.state == State.Released and key.led.color:
                 if key.explode_radius > 0:
                     key.explode_radius -= 1
-                key.led.process()
+                key.led.process(self.sustain)
 
         strip.set_color(self.keyboard)
         strip.show()

@@ -7,6 +7,7 @@ class Mode(ABC):
     def __init__(self, name, keyboard):
         self.name = name
         self.keyboard = keyboard
+        self.sustain = False
 
     @abstractmethod
     def init_leds(self):

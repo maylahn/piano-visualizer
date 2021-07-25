@@ -20,8 +20,7 @@ class cMajor(Mode):
             Color.random(),
         ]
         self.color_split_keys = ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8"]
-        self.fade_led = True
-        self.fade_speed = 0.95
+        self.fading = True
         self.init_leds()
 
     def init_leds(self):
@@ -39,8 +38,7 @@ class cMajor(Mode):
 
         for index, (_, key) in enumerate(self.keyboard.items()):
             key.led = LED(
-                fade_led=self.fade_led,
-                fade_speed=self.fade_speed,
+                fading=self.fading,
                 default_color=colors[index],
             )
 
@@ -50,6 +48,6 @@ class cMajor(Mode):
                 key.state = State.Hold
                 key.led.set_color()
             if key.state == State.Released and key.led.color:
-                key.led.process()
+                key.led.process(self.sustain)
         strip.set_color(self.keyboard)
         strip.show()

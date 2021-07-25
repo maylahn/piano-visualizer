@@ -1,11 +1,19 @@
 import pyaudio
 import numpy as np
-from settings import *
+from settings import (
+    AUDIO_FORMAT,
+    AUDIO_SAMPLE_RATE,
+    AUDIO_CHANNELS,
+    AUDIO_DEVICE_INDEX,
+    AUDIO_CHUNK_SIZE,
+    PIANO_NOTES,
+    AUDIO_DECIBEL_THRESHHOLD,
+    AUDIO_FREQ_MIN,
+)
 from multiprocessing import Process
 
 
 class Audio(Process):
-
     def __init__(self, queue):
         super().__init__()
         self.queue = queue

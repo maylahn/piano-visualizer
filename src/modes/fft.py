@@ -1,18 +1,17 @@
-from multiprocessing.queues import Queue
+from multiprocessing import Queue
 from settings import *
 from led import *
 from copy import deepcopy
 from .abstract_mode import Mode
 from state import State
 from audio import Audio
-from multiprocessing import Process, Queue
+
 
 class FFT(Mode):
     def __init__(self, keyboard):
         super().__init__("fft", deepcopy(keyboard))
         self.color_scheme = Color.name("red")
-        self.fade_led = True
-        self.fade_speed = 0.95
+        self.fading = True
         self.queue = Queue()
         self.audio = None
         self.init_leds()
@@ -20,8 +19,7 @@ class FFT(Mode):
     def init_leds(self):
         for _, key in self.keyboard.items():
             key.led = LED(
-                fade_led=self.fade_led,
-                fade_speed=self.fade_speed,
+                fading=self.fading,
                 default_color=self.color_scheme,
             )
 
@@ -47,6 +45,6 @@ class FFT(Mode):
                 key.led.set_color()
                 key.state = State.Released
             elif key.state == State.Released and key.led.color:
-                key.led.process()
+                key.led.process(self.sustain)
         strip.set_color(self.keyboard)
         strip.show()
