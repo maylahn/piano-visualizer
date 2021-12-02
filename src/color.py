@@ -52,16 +52,42 @@ class Color:
             random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
         )
 
-    def fade(self, fade_speed):
-        self.red = int(self.red * fade_speed) if self.red > 0 else 0
-        self.green = int(self.green * fade_speed) if self.green > 0 else 0
-        self.blue = int(self.blue * fade_speed) if self.blue > 0 else 0
+    def fade(
+        self,
+        fade_speed,
+    ):
+        self.red = (
+            int(self.red * fade_speed)
+            if self.red > self.background_red
+            else self.background_red
+        )
+        self.green = (
+            int(self.green * fade_speed)
+            if self.green > self.background_green
+            else self.background_green
+        )
+        self.blue = (
+            int(self.blue * fade_speed)
+            if self.blue > self.background_blue
+            else self.background_blue
+        )
 
     def brightness(self, velocity):
-        self.red = int(interp(velocity, [25, 100], [0, self.red]))
-        self.green = int(interp(velocity, [25, 100], [0, self.green]))
-        self.blue = int(interp(velocity, [25, 100], [0, self.blue]))
+        self.red = int(interp(velocity, [0, 255], [0, self.red]))
+        self.green = int(interp(velocity, [0, 255], [0, self.green]))
+        self.blue = int(interp(velocity, [0, 255], [0, self.blue]))
         return self
+
+    def set_background_color(self, default_color):
+        self.background_red = int(
+            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.red])
+        )
+        self.background_green = int(
+            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.green])
+        )
+        self.background_blue = int(
+            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.blue])
+        )
 
     def isOn(self):
         return True if self.red + self.green + self.blue > 0 else False

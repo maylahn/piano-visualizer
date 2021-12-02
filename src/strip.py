@@ -7,7 +7,6 @@ from settings import (
     LED_INVERT,
     LED_BRIGHTNESS,
     LED_CHANNEL,
-    LED_STARTUP_COLOR,
 )
 from color import Color
 from key import Key
@@ -26,17 +25,10 @@ class Strip:
         )
         self.strip.begin()
 
-    def startup_sequence(self):
-        self.clear()
-        for i in range(self.strip.numPixels()):
-            self.strip.setPixelColor(i, Color.hex(LED_STARTUP_COLOR).toLED())
-            self.show()
-        self.clear()
-        self.show()
-
     def clear(self):
         for i in range(self.strip.numPixels()):
             self.strip.setPixelColor(i, Color.rgb(0, 0, 0).toLED())
+        self.show()
 
     def show(self):
         self.strip.show()

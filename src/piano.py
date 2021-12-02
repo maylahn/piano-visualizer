@@ -16,7 +16,7 @@ from settings import (
     MIDI_SAVE_TIME_FORMAT,
 )
 from strip import Strip
-from modes import dualcolor, fft, monochrome, multicolor, rainbow, c_major, explode
+from modes import basics, fft, explode
 from key import Key
 from state import State
 from color import Color
@@ -31,11 +31,12 @@ class Piano:
         self.midi_connection = None
         self.keyboard = Key.init_keyboard()
         self.modes = [
-            monochrome.Monochrome(self.keyboard),
-            dualcolor.Dualcolor(self.keyboard),
-            multicolor.Multicolor(self.keyboard),
-            c_major.cMajor(self.keyboard),
-            rainbow.Rainbow(self.keyboard),
+            basics.Mono(self.keyboard),
+            basics.Dual(self.keyboard),
+            basics.Triple(self.keyboard),
+            basics.Multi(self.keyboard),
+            basics.CMajor(self.keyboard),
+            basics.Rainbow(self.keyboard),
             explode.Explode(self.keyboard),
         ]
         if fft_mode:
@@ -46,11 +47,12 @@ class Piano:
         )
         self.strip = Strip()
         self.recording = False
+        self.active_mode.show(self.strip)
 
     def reconnect(self):
         if os.path.exists("/dev/midi"):
             self.midi_connection = mido.open_input(PIANO_MIDI_PORT)
-            self.strip.startup_sequence()
+            self.active_mode.show(self.strip)
             return True
         else:
             self.midi_connection = None
@@ -132,7 +134,7 @@ class Piano:
         )
 
     def update_sustain(self, msg):
-        self.active_mode.sustain = (
+        self.active_mode.sustain_pressed = (
             True if msg.value > 0 and msg.control == 64 else False
         )
 

@@ -1,7 +1,7 @@
 from settings import *
 from led import *
 from copy import deepcopy
-from .abstract_mode import Mode
+from .mode import Mode
 from state import State
 from numpy import interp
 
@@ -104,7 +104,6 @@ class Explode(Mode):
         self.color_split_keys = PIANO_NOTES
         self.radius = 10
         self.radius_list = list(range(-self.radius, self.radius + 1))
-        self.fading = True
         self.init_leds()
 
     def init_leds(self):
@@ -164,7 +163,7 @@ class Explode(Mode):
             if key.state == State.Released and key.led.color:
                 if key.explode_radius > 0:
                     key.explode_radius -= 1
-                key.led.process(self.sustain)
+                key.led.process(self.sustain_pressed)
 
         strip.set_color(self.keyboard)
         strip.show()
