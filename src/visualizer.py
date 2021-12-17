@@ -39,7 +39,7 @@ if __name__ == "__main__":
         piano = Piano()
 
     while True:
-        while piano.is_connected():
+        while piano.midi.port_is_connected():
             piano.process_input()
         else:
-            piano.reconnect()
+            piano.midi.port_reconnect()

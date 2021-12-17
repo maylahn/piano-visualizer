@@ -3,7 +3,7 @@ from settings import *
 from led import *
 from copy import deepcopy
 from .mode import Mode
-from state import State
+from state import KeyState
 from audio import Audio
 
 
@@ -40,10 +40,10 @@ class FFT(Mode):
 
         for _, key in self.keyboard.items():
             if key.frequency == freq:
-                key.state = State.Pressed
+                key.state = KeyState.Pressed
                 key.led.set_color()
-                key.state = State.Released
-            elif key.state == State.Released and key.led.color:
+                key.state = KeyState.Released
+            elif key.state == KeyState.Released and key.led.color:
                 key.led.process(self.sustain_pressed)
         strip.set_color(self.keyboard)
         strip.show()

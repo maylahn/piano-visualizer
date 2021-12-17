@@ -8,9 +8,9 @@ LED_DMA = 10
 LED_BRIGHTNESS = 254
 LED_INVERT = False
 LED_CHANNEL = 0
-LED_FADE_SPEED_WITH_SUSTAIN = 0.95
-LED_FADE_SPEED_WITHOUT_SUSTAIN = 0.6
-LED_BACKGROUND_LIGHT_THRESHHOLD = 0
+LED_FADE_SPEED_WITH_SUSTAIN = 0.95  # 0..1   Higher -> Slower
+LED_FADE_SPEED_WITHOUT_SUSTAIN = 0.6  # 0..1   Higher -> Slower
+LED_BACKGROUND_LIGHT_THRESHOLD = 1
 
 # Piano
 PIANO_NOTES = [
@@ -103,20 +103,35 @@ PIANO_NOTES = [
     "B7",
     "C8",
 ]
-PIANO_MIDI_PORT = "Digital Piano:Digital Piano MIDI 1"
-PIANO_RECONNECT_TIMER = 3
-PIANO_NEXT_MODE_TIMER = 0.5
-PIANO_NEXT_MODE_NOTE = "A0"
-PIANO_RECORD_MIDI_TIMER = 0.5
-PIANO_RECORD_MIDI_NOTE = "C8"
-PIANO_STARTUP_MODE = "mono"
 
+PIANO_STARTUP_MODE = "cmajor"
+
+# Function notes + timer threshold
+FUNC_TIMER_THRESHOLD = 0.5
+FUNCTIONS = [
+    {"name": "Switch to next mode", "note": "A0"},
+    {"name": "Start/Stop Midi Recording", "note": "C8"},
+    {"name": "Toggle Playback On/Off", "note": "B7"},
+    {"name": "Toggle FFT-Mode On/Off", "note": "A7"},
+    {"name": "Toggle LEDs On/Off", "note": "G7"},
+]
 
 # Midi
-MIDI_OFFSET = 21
+MIDI_INPUT_PORT = "Digital Piano:Digital Piano MIDI 1"
+MIDI_OUTPUT_PORT = "Digital Piano:Digital Piano MIDI 1"
+MIDI_INPUT_RECONNECT_TIMER = 1
+MIDI_MSG_NOTE_OFFSET = 21
 MIDI_TEMPO_MULTIPLIER = 960
-MIDI_SAVE_DIRECTORY = "recordings"
-MIDI_SAVE_TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
+
+# Midi over TCP/IP
+MIDI_SERVER_HOSTNAME = ""
+MIDI_SERVER_PORT = 4040
+
+# Midi Recording
+MIDI_RECORD_SAVE_DIRECTORY = "recordings"
+MIDI_RECORD_SAVE_FOLDER_FORMAT = "%B"
+MIDI_RECORD_SAVE_TIME_FORMAT = "%H-%M-%S"
+MIDI_RECORD_LED_SIGNAL_KEY = 'C8'
 
 # Audio
 AUDIO_FORMAT = pyaudio.paInt16
@@ -124,5 +139,5 @@ AUDIO_DEVICE_INDEX = 0
 AUDIO_CHANNELS = 1
 AUDIO_SAMPLE_RATE = 44100
 AUDIO_CHUNK_SIZE = 1024 * 4
-AUDIO_DECIBEL_THRESHHOLD = 30
+AUDIO_DECIBEL_THRESHOLD = 30
 AUDIO_FREQ_MIN = 100

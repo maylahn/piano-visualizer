@@ -1,5 +1,5 @@
-from settings import *
-from state import State
+from settings import MIDI_MSG_NOTE_OFFSET, PIANO_NOTES
+from state import KeyState
 
 
 class Key:
@@ -8,7 +8,7 @@ class Key:
         self.note = note
         self.led_index = self.get_led_index()
         self.frequency = self.get_frequency()
-        self.state = State.Released
+        self.state = KeyState.Released
         self.velocity = 0
         self.led = None
 
@@ -21,7 +21,7 @@ class Key:
 
     @staticmethod
     def index_to_name(key):
-        return PIANO_NOTES[key - MIDI_OFFSET]
+        return PIANO_NOTES[key - MIDI_MSG_NOTE_OFFSET]
 
     def get_frequency(self):
         return 440 * 2 ** ((self.index - 48) / 12)
@@ -35,14 +35,14 @@ class Key:
             return self.index * 2
 
     def set_pressed(self, velocity=100):
-        self.state = State.Pressed
+        self.state = KeyState.Pressed
         self.velocity = velocity
 
     def set_released(self, velocity=0):
-        self.state = State.Released
+        self.state = KeyState.Released
         self.velocity = velocity
 
     def __str__(self):
-        return "Note: {}  State: {}    Velocity: {}".format(
+        return "Note: {}  KeyState: {}    Velocity: {}".format(
             self.note, self.state, self.velocity
         )

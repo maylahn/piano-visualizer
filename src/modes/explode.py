@@ -2,7 +2,7 @@ from settings import *
 from led import *
 from copy import deepcopy
 from .mode import Mode
-from state import State
+from state import KeyState
 from numpy import interp
 
 
@@ -156,11 +156,11 @@ class Explode(Mode):
     def process(self, strip):
         self.set_color()
         for _, key in self.keyboard.items():
-            if key.state == State.Pressed:
-                key.state = State.Hold
+            if key.state == KeyState.Pressed:
+                key.state = KeyState.Hold
                 key.led.set_color()
                 key.explode_radius = self.radius
-            if key.state == State.Released and key.led.color:
+            if key.state == KeyState.Released and key.led.color:
                 if key.explode_radius > 0:
                     key.explode_radius -= 1
                 key.led.process(self.sustain_pressed)

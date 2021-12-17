@@ -7,7 +7,7 @@ from settings import (
     AUDIO_DEVICE_INDEX,
     AUDIO_CHUNK_SIZE,
     PIANO_NOTES,
-    AUDIO_DECIBEL_THRESHHOLD,
+    AUDIO_DECIBEL_THRESHOLD,
     AUDIO_FREQ_MIN,
 )
 from multiprocessing import Process
@@ -46,7 +46,7 @@ class Audio(Process):
             data_in = np.frombuffer(data, dtype=np.int16)
             data_fft = np.fft.rfft(data_in) / ((len(data_in) // 2))
             max_mag = 20 * np.log10(np.max(np.abs(data_fft)))
-            if max_mag < AUDIO_DECIBEL_THRESHHOLD:
+            if max_mag < AUDIO_DECIBEL_THRESHOLD:
                 continue
             else:
                 index = np.argmax(np.abs(data_fft))

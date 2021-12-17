@@ -2,7 +2,7 @@ import time
 from color import Color
 
 from led import LED
-from state import State
+from state import KeyState
 
 
 class Mode:
@@ -40,13 +40,13 @@ class Mode:
 
     def process(self, strip):
         for _, key in self.keyboard.items():
-            if key.state == State.Pressed:
-                key.state = State.Hold
+            if key.state == KeyState.Pressed:
+                key.state = KeyState.Hold
                 if self.velocity:
                     key.led.set_color(velocity=key.velocity)
                 else:
                     key.led.set_color()
-            if key.state == State.Released and key.led.color:
+            if key.state == KeyState.Released and key.led.color:
                 key.led.process(self.sustain_pressed)
         strip.set_color(self.keyboard)
         strip.show()

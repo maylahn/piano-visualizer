@@ -80,13 +80,13 @@ class Color:
 
     def set_background_color(self, default_color):
         self.background_red = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.red])
+            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.red])
         )
         self.background_green = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.green])
+            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.green])
         )
         self.background_blue = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHHOLD, [0, 255], [0, default_color.blue])
+            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.blue])
         )
 
     def isOn(self):
