@@ -1,5 +1,6 @@
 import pyaudio
 import numpy as np
+from multiprocessing import Queue
 from settings import (
     AUDIO_FORMAT,
     AUDIO_SAMPLE_RATE,
@@ -10,7 +11,43 @@ from settings import (
     AUDIO_DECIBEL_THRESHOLD,
     AUDIO_FREQ_MIN,
 )
+from utility.state import KeyState
 from multiprocessing import Process
+
+
+class Analyzer:
+    def __init__(self):
+        self.queue = None
+        self.audio = None
+        self.keyboard = None
+
+    def start(self, keyboard):
+        self.queue = Queue()
+        self.audio = Audio(self.queue)
+        self.keyboard = keyboard
+        self.audio.start()
+
+    def stop(self):
+        if self.audio:
+            self.audio.stream.close()
+            self.audio.terminate()
+            self.audio = None
+
+    def process(self, strip):
+        freq = 0
+
+        if not self.queue.empty():
+            freq = self.queue.get(block=False)
+
+        for key in self.keyboard.keys:
+            if key.frequency == freq:
+                key.state = KeyState.Pressed
+                key.led.set_color()
+                key.state = KeyState.Released
+            elif key.state == KeyState.Released and key.led.color:
+                key.led.process(sustain_pressed=True)
+        strip.set_color(self.keyboard)
+        strip.show()
 
 
 class Audio(Process):

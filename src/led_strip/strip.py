@@ -1,4 +1,5 @@
 from rpi_ws281x import Adafruit_NeoPixel
+from piano.keyboard import Keyboard
 from settings import (
     LED_COUNT,
     LED_PIN,
@@ -8,8 +9,8 @@ from settings import (
     LED_BRIGHTNESS,
     LED_CHANNEL,
 )
-from color import Color
-from key import Key
+from .color import Color
+from piano.key import Key
 
 
 class Strip:
@@ -36,7 +37,7 @@ class Strip:
     def set_color(self, obj):
         if type(obj) == Key:
             self.strip.setPixelColor(obj.led_index, obj.led.color.toLED())
-        else:
-            for _, key in obj.items():
+        elif type(obj) == Keyboard:
+            for key in obj.keys:
                 if key.led.color:
                     self.strip.setPixelColor(key.led_index, key.led.color.toLED())

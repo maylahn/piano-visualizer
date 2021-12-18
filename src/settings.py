@@ -10,7 +10,7 @@ LED_INVERT = False
 LED_CHANNEL = 0
 LED_FADE_SPEED_WITH_SUSTAIN = 0.95  # 0..1   Higher -> Slower
 LED_FADE_SPEED_WITHOUT_SUSTAIN = 0.6  # 0..1   Higher -> Slower
-LED_BACKGROUND_LIGHT_THRESHOLD = 1
+LED_BACKGROUND_LIGHT_THRESHOLD = 0
 
 # Piano
 PIANO_NOTES = [
@@ -112,8 +112,9 @@ FUNCTIONS = [
     {"name": "Switch to next mode", "note": "A0"},
     {"name": "Start/Stop Midi Recording", "note": "C8"},
     {"name": "Toggle Playback On/Off", "note": "B7"},
-    {"name": "Toggle FFT-Mode On/Off", "note": "A7"},
+    {"name": "Toggle Mic-Analyzer On/Off", "note": "A7"},
     {"name": "Toggle LEDs On/Off", "note": "G7"},
+    {"name": "Set Background Light", "note": "F7"},
 ]
 
 # Midi
@@ -130,8 +131,8 @@ MIDI_SERVER_PORT = 4040
 # Midi Recording
 MIDI_RECORD_SAVE_DIRECTORY = "recordings"
 MIDI_RECORD_SAVE_FOLDER_FORMAT = "%B"
-MIDI_RECORD_SAVE_TIME_FORMAT = "%H-%M-%S"
-MIDI_RECORD_LED_SIGNAL_KEY = 'C8'
+MIDI_RECORD_SAVE_TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
+MIDI_RECORD_LED_SIGNAL_KEY = "C8"
 
 # Audio
 AUDIO_FORMAT = pyaudio.paInt16

@@ -1,10 +1,72 @@
-from settings import *
-from led import *
+from settings import LED_BACKGROUND_LIGHT_THRESHOLD
+from led_strip.led import *
 from copy import deepcopy
-from .mode import Mode
+from time import sleep
+from utility.state import KeyState
 
 
-class Mono(Mode):
+class Scheme:
+    def __init__(self, name, keyboard):
+        self.name = name
+        self.keyboard = keyboard
+        self.sustain_pressed = False
+        self.fading = True
+        self.velocity = True
+        self.background_light_threshold = LED_BACKGROUND_LIGHT_THRESHOLD
+        self.color_key_mapping = {
+            "A0": Color.name("white"),
+        }
+        
+    def init_leds(self):
+        color = self.color_key_mapping.get("A0", Color.name("white"))
+
+        for key in self.keyboard.keys:
+            color = self.color_key_mapping.get(key.note, color)
+            key.led = LED(
+                fading=self.fading,
+                default_color=color,
+                background_light_threshold = self.background_light_threshold
+            )
+
+    def get_key_from_msg(self, msg):
+        return self.keyboard.get_key_from_msg(msg)
+
+    def set_background_light_threshold(self):
+        if self.background_light_threshold < 20:
+            self.background_light_threshold += 5
+        else:
+            self.background_light_threshold = 0
+
+        for key in self.keyboard.keys:
+            key.led.background_light_threshold = self.background_light_threshold
+
+    def show(self, strip, timer=1):
+        strip.clear()
+        for key in self.keyboard.keys:
+            key.set_pressed()
+            key.led.set_color(velocity=50)
+        strip.set_color(self.keyboard)
+        strip.show()
+        sleep(timer)
+
+        for key in self.keyboard.keys:
+            key.set_released()
+
+    def process(self, strip):
+        for key in self.keyboard.keys:
+            if key.state == KeyState.Pressed:
+                key.state = KeyState.Hold
+                if self.velocity:
+                    key.led.set_color(velocity=key.velocity)
+                else:
+                    key.led.set_color()
+            if key.state == KeyState.Released and key.led.color:
+                key.led.process(self.sustain_pressed)
+        strip.set_color(self.keyboard)
+        strip.show()
+
+
+class Mono(Scheme):
     def __init__(self, keyboard):
         super().__init__("mono", deepcopy(keyboard))
         self.color_key_mapping = {
@@ -13,14 +75,14 @@ class Mono(Mode):
         self.init_leds()
 
 
-class Dual(Mode):
+class Dual(Scheme):
     def __init__(self, keyboard):
         super().__init__("dual", deepcopy(keyboard))
         self.color_key_mapping = {"A0": Color.name("blue"), "C3": Color.name("red")}
         self.init_leds()
 
 
-class Triple(Mode):
+class Triple(Scheme):
     def __init__(self, keyboard):
         super().__init__("triple", deepcopy(keyboard))
         self.color_key_mapping = {
@@ -31,7 +93,7 @@ class Triple(Mode):
         self.init_leds()
 
 
-class Multi(Mode):
+class Multi(Scheme):
     def __init__(self, keyboard):
         super().__init__("multi", deepcopy(keyboard))
         self.color_key_mapping = {
@@ -43,7 +105,7 @@ class Multi(Mode):
         self.init_leds()
 
 
-class CMajor(Mode):
+class CMajor(Scheme):
     def __init__(self, keyboard):
         super().__init__("cmajor", deepcopy(keyboard))
         self.color_key_mapping = {
@@ -53,13 +115,14 @@ class CMajor(Mode):
             "C3": Color.name("yellow"),
             "C4": Color.name("cyan"),
             "C5": Color.name("magenta"),
-            "C6": Color.name("teal"),
-            "C7": Color.name("navy"),
+            "C6": Color.name("lime"),
+            "C7": Color.name("silver"),
+            "C8": Color.name("navy"),
         }
         self.init_leds()
 
 
-class Rainbow(Mode):
+class Rainbow(Scheme):
     def __init__(self, keyboard):
         super().__init__("rainbow", deepcopy(keyboard))
         self.color_key_mapping = {

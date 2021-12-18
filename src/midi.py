@@ -1,18 +1,13 @@
 import os
 import mido
+import os.path
 import time
-import datetime
-from pathlib import Path
 from settings import (
-    MIDI_RECORD_SAVE_DIRECTORY,
-    MIDI_RECORD_SAVE_FOLDER_FORMAT,
-    MIDI_RECORD_SAVE_TIME_FORMAT,
     MIDI_SERVER_HOSTNAME,
     MIDI_SERVER_PORT,
     MIDI_OUTPUT_PORT,
     MIDI_INPUT_PORT,
     MIDI_INPUT_RECONNECT_TIMER,
-    MIDI_TEMPO_MULTIPLIER,
 )
 
 
@@ -21,13 +16,6 @@ class Midi:
         # Connection
         self.input_port = None
         self.output_port = None
-
-        # Recording
-        self.recording = None
-        self.timer_record_midi = None
-        self.file = None
-        self.track = None
-        self.tempo = None
 
         # Server
         self.server = None
@@ -77,61 +65,3 @@ class Midi:
                 client.send(msg)
             except:
                 pass
-
-    """
-    RECORDING
-    """
-    def start_recording(self):
-        self.midi_track = mido.MidiTrack()
-        self.midi_file = mido.MidiFile()
-        self.midi_file.tracks.append(self.midi_track)
-        self.midi_tempo = time.time()
-
-
-    def stop_recording(self):
-        del self.midi_track[0]
-        del self.midi_track[-1]
-
-        Path('{}/{}'.format(
-            MIDI_RECORD_SAVE_DIRECTORY,
-            datetime.datetime.now().strftime(MIDI_RECORD_SAVE_FOLDER_FORMAT)
-        )).mkdir(parents=True, exist_ok=True)
-        
-        filename = "{}/{}/{}.mid".format(
-            MIDI_RECORD_SAVE_DIRECTORY,
-            datetime.datetime.now().strftime(MIDI_RECORD_SAVE_FOLDER_FORMAT),
-            datetime.datetime.now().strftime(MIDI_RECORD_SAVE_TIME_FORMAT),
-        )
-        self.midi_file.save(filename=filename)
-
-    def add_to_file(self, msg):
-        if msg.type == 'note_on':
-            type = 'note_on' if msg.velocity > 0 else 'note_off'
-            self.midi_track.append(
-                mido.Message(
-                    type,
-                    note=msg.note,
-                    velocity=msg.velocity,
-                    time=int((time.time() - self.midi_tempo) * MIDI_TEMPO_MULTIPLIER),
-                )
-            )
-        if msg.type == 'control_change':
-            self.midi_track.append(
-                mido.Message(
-                    "control_change",
-                    control=64,
-                    value=msg.value,
-                    time=int((time.time() - self.midi_tempo) * MIDI_TEMPO_MULTIPLIER),
-                )
-            )
-        self.midi_tempo = time.time()
-
-
-    """
-    PLAYBACK
-    """
-    def playback(self):
-        for msg in mido.MidiFile("src/test.mid").play():
-            self.output_port.send(msg)
-            if self.midi_connection:
-                self.midi_connection.send(msg)

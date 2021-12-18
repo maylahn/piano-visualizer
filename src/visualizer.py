@@ -3,7 +3,7 @@ import mido
 import argparse
 import pyaudio
 
-from piano import Piano
+from piano.piano import Piano
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

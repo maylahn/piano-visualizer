@@ -1,5 +1,4 @@
-from settings import MIDI_MSG_NOTE_OFFSET, PIANO_NOTES
-from state import KeyState
+from utility.state import KeyState
 
 
 class Key:
@@ -11,17 +10,6 @@ class Key:
         self.state = KeyState.Released
         self.velocity = 0
         self.led = None
-
-    @staticmethod
-    def init_keyboard():
-        keyboard = {}
-        for index, note in enumerate(PIANO_NOTES, 0):
-            keyboard[note] = Key(index, note)
-        return keyboard
-
-    @staticmethod
-    def index_to_name(key):
-        return PIANO_NOTES[key - MIDI_MSG_NOTE_OFFSET]
 
     def get_frequency(self):
         return 440 * 2 ** ((self.index - 48) / 12)

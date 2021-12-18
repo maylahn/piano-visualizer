@@ -78,15 +78,15 @@ class Color:
         self.blue = int(interp(velocity, [0, 255], [0, self.blue]))
         return self
 
-    def set_background_color(self, default_color):
+    def set_background_color(self, default_color, background_light_threshold):
         self.background_red = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.red])
+            interp(background_light_threshold, [0, 255], [0, default_color.red])
         )
         self.background_green = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.green])
+            interp(background_light_threshold, [0, 255], [0, default_color.green])
         )
         self.background_blue = int(
-            interp(LED_BACKGROUND_LIGHT_THRESHOLD, [0, 255], [0, default_color.blue])
+            interp(background_light_threshold, [0, 255], [0, default_color.blue])
         )
 
     def isOn(self):

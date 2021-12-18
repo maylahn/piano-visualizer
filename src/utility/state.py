@@ -11,5 +11,5 @@ class PianoState(enum.Enum):
     Default = 1
     Recording = 2
     Playback = 3
-    FFT = 4
+    MicAnalyze = 4
     LED_Off = 5
