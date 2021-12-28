@@ -1,18 +1,5 @@
 import pyaudio
 
-# LED
-LED_COUNT = 176
-LED_PIN = 18
-LED_FREQ_HZ = 800000
-LED_DMA = 10
-LED_BRIGHTNESS = 255
-LED_INVERT = False
-LED_CHANNEL = 0
-LED_FADE_SPEED_WITH_SUSTAIN = 0.95  # 0..1   Higher -> Slower
-LED_FADE_SPEED_WITHOUT_SUSTAIN = 0.6  # 0..1   Higher -> Slower
-LED_BACKGROUND_LIGHT_THRESHOLD = 0
-
-# Piano
 PIANO_NOTES = [
     "A0",
     "A#0",
@@ -140,6 +127,18 @@ FUNCTIONS = [
         "indicator": {"note": None, "color": None, "type": None},
     },
 ]
+
+# LED
+LED_COUNT = 176
+LED_PIN = 18
+LED_FREQ_HZ = 800000
+LED_DMA = 10
+LED_BRIGHTNESS = 255
+LED_INVERT = False
+LED_CHANNEL = 0
+LED_FADE_SPEED_WITH_SUSTAIN = 0.95  # 0..1   Higher -> Slower
+LED_FADE_SPEED_WITHOUT_SUSTAIN = 0.6  # 0..1   Higher -> Slower
+LED_BACKGROUND_LIGHT_THRESHOLD = 0
 
 # Midi
 MIDI_INPUT_PORT = "Digital Piano:Digital Piano MIDI 1"

@@ -1,6 +1,6 @@
 # Piano Visualizer
 
-Piano visualization with a LED-Strip for a e-piano keyboard running on a Raspberry Pi.
+Realtime piano visualization with a LED-Strip for an E-Piano running on a Raspberry Pi.
 
 Using [Mido](https://mido.readthedocs.io/en/latest/) to read Midi Signals over USB and [rpi-ws281x](https://github.com/jgarff/rpi_ws281x) library to control the LEDs.
 
@@ -17,12 +17,6 @@ Also following Libraries are required:
 sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
 ```
 
-### settings.py includes all user specific settings
-* piano settings (Midi port, reconnect timer, midi offset etc.)
-* led settings (Number of leds, GPIO Pin etc.)
-* piano config mode settings
-* audio settings for FFT (Microphone index, sample rate etc.)
-
 
 ## Usage
 ```
@@ -37,35 +31,100 @@ python3 visualizer.py <args>
 
 
 
-## Current features
-* Several 'Color Modes' switchable via a specific configured keyboard note
-* 'FFT Mode': Connected microphone gathers information from the enviorement and displays the nearest possible frequency on the led strip. Simply whistle a melody and play it back on your piano.
+
+## Features
+### Overview
+
+* Several 'Color Schemes' switchable via a specific configured keyboard note
+  * Monochrome
+  * Dual Color
+  * Triple Color
+  * Multicolor
+  * C-Major Split
+  * Rainbow
+* Different Sequences for startup / switching to any color scheme
+* 'Microphone Analyzer Mode': Connected microphone gathers information from the enviroment and displays the nearest possible matching frequency on the led strip. Simply whistle, hum, sing a melody and see to which note to play on the piano.
 * Automatic reconnection of the Piano. No need to restart the python app.
-* Fully customisable settings for the user in settings.py (Startup Mode, Startup Color, Reconnect Timer, ...)
+* Customizable settings for a user in settings.py (See below)
+* Custom function assigment to keys with led indicator for different modes. Currently includes:
+  * Switch to next color scheme
+  * Start / Stop midi recording
+  * Playback function for recoreded midi files
+  * Start / Stop FFT Analyzer 
+  * Toggle LEDs On / Off via key
+  
+
+### Fully customizable settings in settings.py file
+#### Piano settings
+* Startup mode
+* Function assigment for specific keys which includes
+  * Name
+  * Note name to poll for
+  * Indication of LED if state is active
+* Adjustable timer threshold to call given function (eg. hold note 'A3' for 2.5 seconds to switch to next color scheme)
+
+
+#### Midi settings
+* Input / Output Port
+* Reconnect Timer
+* Midi over TCP/IP 
+  * Hostname
+  * Port
+* Recording
+  * Save directory
+  * Save format
+
+#### LED settings
+* Num of LEDs
+* GPIO data pin
+* Frequency
+* Brightness
+* Channel
+* Fading speed of LEDs with / without pedal sustain
+* Background Light threshold
+
+#### Audio Settings
+* Used only for FFT Analyzer if a Microphone is connected
+  * Microphone Index
+  * Sample Rate
+  * Chunk Size
+  * Decibel Treshold to light up LED
+  * Minimal Frequency to light up LED
+
 
 ## Future implementations
-* Add Config mode to manually adjust colors / properties of a mode
-* write a documentation how to use the config mode
-* Add More color modes
-* write a documentation for all config settings
+* Make usage of not used LEDs for color modes
+* Add more complex color modes (eg. Explosion, Ping Pong, etc.)
+* Add possibilty to choose playback of last 5? recorded midi files
+  * Or somehow scrolling through all available files
+* Automatic startup of http-server of recoreded files to easily transfer them
 * implement a setup routine for other pianos
 
 
 ## Changelog
-### 0.5 (2011-07-07)
+### 0.6 (2021-12-29)
+- Add more information to each function in settings file
+- Let FFT Analyzer create midi Messages instead of handling the LED strip colors by itself
+- Split Playback in two seperate classes (Handler and pure process)
+- Add Sequence class for each color scheme
+- Move pulse function for forced keys to led class instead of color class
+- Add function to use the LEDs as background light
+- Cleanup initialisation of Piano class
+
+### 0.5 (2021-07-07)
 - refactored modes to use an abstract class for easy creation of new modes
 - fixed and added fft mode again 
 - add possibility to change modes since the whole config mode doesn't exist anymore
 
 
-### 0.4 (2011-07-05)
+### 0.4 (2021-07-05)
 - refactor the whole 'active mode' code.
 - now each mode has a own set of all 88 keys and their leds
 - Medium Priority: 'fix the preset color modes/schemas (monochrome, multicolor, rainbow)' works now as expected
 - implemented config mode doesn't work in this version anymore
 - implemented fft mode doesn't work in this version anymore
 
-### 0.3 (2011-06-30)
+### 0.3 (2021-06-30)
 - format code with black
 - add licence
   
