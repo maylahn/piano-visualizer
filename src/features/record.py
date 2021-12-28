@@ -10,7 +10,7 @@ from settings import (
 )
 
 
-class Record:
+class RecordHandler:
     def __init__(self):
         self.recording = None
         self.timer_record_midi = None

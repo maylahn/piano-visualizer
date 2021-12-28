@@ -5,7 +5,7 @@ LED_COUNT = 176
 LED_PIN = 18
 LED_FREQ_HZ = 800000
 LED_DMA = 10
-LED_BRIGHTNESS = 254
+LED_BRIGHTNESS = 255
 LED_INVERT = False
 LED_CHANNEL = 0
 LED_FADE_SPEED_WITH_SUSTAIN = 0.95  # 0..1   Higher -> Slower
@@ -109,12 +109,36 @@ PIANO_STARTUP_MODE = "cmajor"
 # Function notes + timer threshold
 FUNC_TIMER_THRESHOLD = 0.5
 FUNCTIONS = [
-    {"name": "Switch to next mode", "note": "A0"},
-    {"name": "Start/Stop Midi Recording", "note": "C8"},
-    {"name": "Toggle Playback On/Off", "note": "B7"},
-    {"name": "Toggle Mic-Analyzer On/Off", "note": "A7"},
-    {"name": "Toggle LEDs On/Off", "note": "G7"},
-    {"name": "Set Background Light", "note": "F7"},
+    {
+        "name": "Switch to next mode",
+        "note": "A0",
+        "indicator": {"note": None, "color": None, "type": None},
+    },
+    {
+        "name": "Start/Stop Midi Recording",
+        "note": "C8",
+        "indicator": {"note": "C8", "color": "red", "type": "pulse"},
+    },
+    {
+        "name": "Toggle Playback On/Off",
+        "note": "B7",
+        "indicator": {"note": "B7", "color": "green", "type": "pulse"},
+    },
+    {
+        "name": "Toggle Mic-Analyzer On/Off",
+        "note": "A7",
+        "indicator": {"note": "A7", "color": "blue", "type": "pulse"},
+    },
+    {
+        "name": "Toggle LEDs On/Off",
+        "note": "G7",
+        "indicator": {"note": None, "color": None, "type": None},
+    },
+    {
+        "name": "Set Background Light",
+        "note": "F7",
+        "indicator": {"note": None, "color": None, "type": None},
+    },
 ]
 
 # Midi
@@ -132,7 +156,6 @@ MIDI_SERVER_PORT = 4040
 MIDI_RECORD_SAVE_DIRECTORY = "recordings"
 MIDI_RECORD_SAVE_FOLDER_FORMAT = "%B"
 MIDI_RECORD_SAVE_TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
-MIDI_RECORD_LED_SIGNAL_KEY = "C8"
 
 # Audio
 AUDIO_FORMAT = pyaudio.paInt16
@@ -141,4 +164,4 @@ AUDIO_CHANNELS = 1
 AUDIO_SAMPLE_RATE = 44100
 AUDIO_CHUNK_SIZE = 1024 * 4
 AUDIO_DECIBEL_THRESHOLD = 30
-AUDIO_FREQ_MIN = 100
+AUDIO_FREQ_MIN = 50

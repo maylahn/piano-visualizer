@@ -1,6 +1,7 @@
 from piano.key import Key
 from settings import MIDI_MSG_NOTE_OFFSET, PIANO_NOTES
 
+
 class Keyboard:
     def __init__(self):
         self.keys = []
@@ -13,6 +14,9 @@ class Keyboard:
     def get_force_controlled_keys(self):
         return [x for x in self.keys if x.led.force_control]
 
+    def get_key_from_note(self, note):
+        return [x for x in self.keys if x.note == note][0]
+
     @staticmethod
     def get_key_name_from_msg(msg):
         return PIANO_NOTES[msg.note - MIDI_MSG_NOTE_OFFSET]
@@ -20,4 +24,3 @@ class Keyboard:
     @staticmethod
     def get_key_index_from_msg(msg):
         return msg.note - MIDI_MSG_NOTE_OFFSET
-

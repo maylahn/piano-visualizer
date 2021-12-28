@@ -1,6 +1,6 @@
 import pyaudio
 import numpy as np
-from multiprocessing import Queue
+from multiprocessing import Process, Queue
 from settings import (
     AUDIO_FORMAT,
     AUDIO_SAMPLE_RATE,
@@ -11,49 +11,38 @@ from settings import (
     AUDIO_DECIBEL_THRESHOLD,
     AUDIO_FREQ_MIN,
 )
-from utility.state import KeyState
-from multiprocessing import Process
 
 
-class Analyzer:
+class AnalyzerHandler:
     def __init__(self):
         self.queue = None
-        self.audio = None
+        self.analyzer_process = None
         self.keyboard = None
 
     def start(self, keyboard):
         self.queue = Queue()
-        self.audio = Audio(self.queue)
-        self.keyboard = keyboard
-        self.audio.start()
+        self.analyzer_process = AnalyzerProcess(self.queue, keyboard)
+        self.analyzer_process.start()
 
     def stop(self):
-        if self.audio:
-            self.audio.stream.close()
-            self.audio.terminate()
-            self.audio = None
+        if self.analyzer_process:
+            self.analyzer_process.stream.close()
+            self.analyzer_process.terminate()
+            self.analyzer_process = None
 
-    def process(self, strip):
-        freq = 0
-
+    def process(self):
+        msg = None
         if not self.queue.empty():
-            freq = self.queue.get(block=False)
-
-        for key in self.keyboard.keys:
-            if key.frequency == freq:
-                key.state = KeyState.Pressed
-                key.led.set_color()
-                key.state = KeyState.Released
-            elif key.state == KeyState.Released and key.led.color:
-                key.led.process(sustain_pressed=True)
-        strip.set_color(self.keyboard)
-        strip.show()
+            msg = self.queue.get(block=False)
+        if msg:
+            return msg
 
 
-class Audio(Process):
-    def __init__(self, queue):
+class AnalyzerProcess(Process):
+    def __init__(self, queue, keyboard):
         super().__init__()
         self.queue = queue
+        self.keyboard = keyboard
         self.piano_frequencies = self.calculate_frequencies()
         self.audio = pyaudio.PyAudio()
         self.stream = self.audio.open(
@@ -72,10 +61,7 @@ class Audio(Process):
         return array[idx]
 
     def calculate_frequencies(self):
-        frequencies = []
-        for x, _ in enumerate(PIANO_NOTES, 1):
-            frequencies.append(2 ** ((x - 49) / 12) * 440)
-        return frequencies
+        return [key.frequency for key in self.keyboard.keys]
 
     def run(self):
         while True:
@@ -90,4 +76,13 @@ class Audio(Process):
                 freq = np.fft.fftfreq(AUDIO_CHUNK_SIZE, d=1 / AUDIO_SAMPLE_RATE)
                 nearest_freq = self.find_nearest(freq[index])
                 if nearest_freq > AUDIO_FREQ_MIN:
-                    self.queue.put(nearest_freq)
+                    keys = [
+                        key
+                        for key in self.keyboard.keys
+                        if key.frequency == nearest_freq
+                    ]
+                    if keys:
+                        key_on = keys[0].to_midi_message(type="on")
+                        key_off = keys[0].to_midi_message(type="off")
+                        self.queue.put(key_on)
+                        self.queue.put(key_off)

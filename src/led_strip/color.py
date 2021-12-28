@@ -100,23 +100,5 @@ class Color:
     def toLED(self):
         return self.red << 16 | self.green << 8 | self.blue
 
-    def pulse(self):
-        if self.pulsing_direction > 0:
-            self.red = (
-                self.red + self.pulsing_direction
-                if self.red + self.pulsing_direction < 255
-                else 255
-            )
-            if self.red == 255:
-                self.pulsing_direction *= -1
-        else:
-            self.red = (
-                self.red + self.pulsing_direction
-                if self.red + self.pulsing_direction > 0
-                else 0
-            )
-            if self.red == 0:
-                self.pulsing_direction *= -1
-
     def __str__(self):
         return "R: {}   G: {}   B: {}".format(self.red, self.green, self.blue)

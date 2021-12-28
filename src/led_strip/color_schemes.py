@@ -1,5 +1,7 @@
 from settings import LED_BACKGROUND_LIGHT_THRESHOLD
-from led_strip.led import *
+from led_strip.led import LED
+from led_strip.color import Color
+from led_strip.sequences import Sequence
 from copy import deepcopy
 from time import sleep
 from utility.state import KeyState
@@ -12,11 +14,12 @@ class Scheme:
         self.sustain_pressed = False
         self.fading = True
         self.velocity = True
+        self.sequence = Sequence("X")
         self.background_light_threshold = LED_BACKGROUND_LIGHT_THRESHOLD
         self.color_key_mapping = {
             "A0": Color.name("white"),
         }
-        
+
     def init_leds(self):
         color = self.color_key_mapping.get("A0", Color.name("white"))
 
@@ -25,32 +28,24 @@ class Scheme:
             key.led = LED(
                 fading=self.fading,
                 default_color=color,
-                background_light_threshold = self.background_light_threshold
+                background_light_threshold=self.background_light_threshold,
             )
 
     def get_key_from_msg(self, msg):
         return self.keyboard.get_key_from_msg(msg)
 
     def set_background_light_threshold(self):
-        if self.background_light_threshold < 20:
-            self.background_light_threshold += 5
-        else:
-            self.background_light_threshold = 0
+        self.background_light_threshold = (
+            self.background_light_threshold + 3
+            if self.background_light_threshold < 9
+            else 0
+        )
 
         for key in self.keyboard.keys:
             key.led.background_light_threshold = self.background_light_threshold
 
-    def show(self, strip, timer=1):
-        strip.clear()
-        for key in self.keyboard.keys:
-            key.set_pressed()
-            key.led.set_color(velocity=50)
-        strip.set_color(self.keyboard)
-        strip.show()
-        sleep(timer)
-
-        for key in self.keyboard.keys:
-            key.set_released()
+    def show_activate_sequence(self, strip):
+        self.sequence.show(strip, self.keyboard)
 
     def process(self, strip):
         for key in self.keyboard.keys:
