@@ -135,10 +135,13 @@ class Piano:
     def update(self, msg):
         if msg.type == "note_on" or msg.type == "note_off":
             key = self.active_color_scheme.get_key_from_msg(msg)
-            if key.state == KeyState.Released and msg.velocity > 0:
-                key.set_pressed(msg.velocity)
-            elif msg.velocity == 0:
-                key.set_released(msg.velocity)
+            if msg.type == "note_on":
+                if msg.velocity > 0:
+                    key.set_pressed(msg.velocity)
+                if msg.velocity == 0:
+                    key.set_released()
+            if msg.type == "note_off":
+                key.set_released()
         elif msg.type == "control_change":
             self.active_color_scheme.sustain_pressed = (
                 True if msg.value > 0 and msg.control == 64 else False
