@@ -49,4 +49,5 @@ class PlaybackProcess(Process):
     def run(self):
         for msg in MidiFile(self.file):
             sleep(msg.time)
-            self.queue.put(msg)
+            if not msg.is_meta:
+                self.queue.put(msg)
